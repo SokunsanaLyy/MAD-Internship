@@ -1,0 +1,53 @@
+# ===== Swift (Swift Package Manager, VS Code) =====
+.build/
+.swiftpm/
+*.o
+*.swiftmodule
+*.swiftdoc
+# Keep Package.resolved committed so dependency versions stay consistent
+
+# ===== VS Code =====
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+*.code-workspace
+.history/
+
+# ===== Xcode (in case you open projects on a Mac later) =====
+xcuserdata/
+DerivedData/
+*.xcuserstate
+build/
+
+# ===== Android / Kotlin (Android Studio) =====
+.gradle/
+local.properties
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+app/release/
+*.apk
+*.aab
+
+# ===== Secrets & signing keys (never commit these) =====
+.env
+.env.*
+secrets.*
+*.keystore
+*.jks
+*.p12
+*.pem
+*.mobileprovision
+GoogleService-Info.plist
+google-services.json
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Logs =====
+*.log
