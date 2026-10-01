@@ -51,3 +51,8 @@ desktop.ini
 
 # ===== Logs =====
 *.log
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+.DS_Store
