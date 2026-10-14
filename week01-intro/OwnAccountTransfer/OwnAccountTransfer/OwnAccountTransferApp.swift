@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@main
 struct OwnAccountTransferApp: App {
     var body: some Scene {
         WindowGroup {
