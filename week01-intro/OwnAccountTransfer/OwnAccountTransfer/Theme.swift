@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: Colours
 // One place for every colour in the app. Change a value here and every screen updates.
@@ -12,6 +13,20 @@ extension Color {
     static let fieldBorder = Color.gray.opacity(0.25)                   // outlines & dividers
     static let surface     = Color(.systemGray6)                        // light grey panels
     static let avatarGrey  = Color(red: 0.20, green: 0.26, blue: 0.36)
+}
+
+// MARK: UIKit colours
+// The same colours for UIKit screens, converted from the SwiftUI values above.
+extension UIColor {
+    static let brandNavy   = UIColor(Color.brandNavy)
+    static let brandIndigo = UIColor(Color.brandIndigo)
+    static let skyTop      = UIColor(Color.skyTop)
+    static let skyBottom   = UIColor(Color.skyBottom)
+    static let gold        = UIColor(Color.gold)
+    static let debitRed    = UIColor(Color.debitRed)
+    static let fieldBorder = UIColor.gray.withAlphaComponent(0.25)
+    static let surface     = UIColor.systemGray6
+    static let avatarGrey  = UIColor(Color.avatarGrey)
 }
 
 // MARK: Sky background
