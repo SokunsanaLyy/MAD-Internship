@@ -1,3 +1,10 @@
+//
+//  Components.swift
+//  OwnTransferAccountUIKit
+//
+//  Created by Sokunsana Ly on 18/10/2026.
+//
+
 import UIKit
 
 // Reusable UIKit views used on several screens.
@@ -8,7 +15,6 @@ import UIKit
 //   3. Expose a `configure(...)` method or closures (onTap, onChange) for the screen to use.
 
 // MARK: - Header bar
-// Back button + title (+ optional info icon) + logo. Taps are reported through closures.
 final class HeaderBarView: UIView {
 
     var onBack: (() -> Void)?

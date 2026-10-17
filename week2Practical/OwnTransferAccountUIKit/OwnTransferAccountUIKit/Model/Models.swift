@@ -44,9 +44,9 @@ enum Money {
 struct Account: Equatable {
     let id = UUID()            // unique, so two accounts with the same number are still different
     let number: String
-    let currency: String       // "USD" or "KHR"
-    let type: String           // "Wallet" or "Savings"
-    var balance: Double        // `var`: it changes after a transfer
+    let currency: String      
+    let type: String
+    var balance: Double
 
     var formattedBalance: String { Money.formatNumber(balance, currency: currency) }
 
