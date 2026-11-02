@@ -7,61 +7,120 @@
 
 import UIKit
 
-final class FormFieldView: UIView {
+// MARK: - ValeButton
 
-    let textField = UITextField()
+final class ValeButton: UIButton {
 
-    private let titleLabel = UILabel(font: .vale(14, .medium))
-    private let box = UIView()
+    enum Style {
+        case primary, outline, lime, white, tile
+    }
 
-    init(title: String, placeholder: String) {
+    private let style: Style
+
+    init(_ title: String, symbol: String? = nil, style: Style = .primary, trailingIcon: Bool = false) {
+        self.style = style
         super.init(frame: .zero)
-        titleLabel.text = title
-        textField.placeholder = placeholder
-        textField.font = .vale(16)
-        textField.textColor = .valeInk
-        textField.accessibilityLabel = title
-        setupViews()
+
+        var config: UIButton.Configuration = style == .primary ? .filled() : .plain()
+        config.title = title
+        config.imagePadding = style == .tile ? 10 : 8
+        config.imagePlacement = style == .tile ? .top : (trailingIcon ? .trailing : .leading)
+        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: style == .tile ? 18 : 14,
+                                                                                  weight: .semibold)
+        if let symbol { config.image = UIImage(systemName: symbol) }
+
+        config.background.cornerRadius = 14
+        config.cornerStyle = .fixed
+        let font = UIFont.vale(style == .tile ? 13 : 16, .semibold)
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = font
+            return outgoing
+        }
+        configuration = config
+        applyColors()
+
+        let height: CGFloat = style == .tile ? 88 : (style == .lime || style == .white ? 44 : AppLayout.buttonHeight)
+        heightAnchor.constraint(equalToConstant: height).isActive = true
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    var hasError = false {
-        didSet { box.layer.borderColor = (hasError ? UIColor.valeRed : UIColor.valeBorder).cgColor }
-    }
-
-    func addPasswordToggle() {
-        textField.isSecureTextEntry = true
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage(systemName: "eye.slash")
-        config.baseForegroundColor = .valeMuted
-        let button = UIButton(configuration: config)
-        button.accessibilityLabel = "Show password"
-        button.on { [weak self, weak button] in
-            guard let self else { return }
-            self.textField.isSecureTextEntry.toggle()
-            let hidden = self.textField.isSecureTextEntry
-            button?.configuration?.image = UIImage(systemName: hidden ? "eye.slash" : "eye")
-            button?.accessibilityLabel = hidden ? "Show password" : "Hide password"
+    /// Shows a spinner and blocks taps while a request is running.
+    var isLoading = false {
+        didSet {
+            configuration?.showsActivityIndicator = isLoading
+            isEnabled = !isLoading
         }
-        textField.rightView = button
-        textField.rightViewMode = .always
     }
 
-    private func setupViews() {
-        box.applyCardStyle(radius: 14)
-        box.addSubviews(textField)
-
-        let stack = UIStackView(axis: .vertical, spacing: 8, views: [titleLabel, box])
-        addSubviews(stack)
-        stack.pinEdges(to: self)
-
-        NSLayoutConstraint.activate([
-            box.heightAnchor.constraint(equalToConstant: AppLayout.fieldHeight),
-            textField.leadingAnchor.constraint(equalTo: box.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: box.trailingAnchor, constant: -8),
-            textField.topAnchor.constraint(equalTo: box.topAnchor),
-            textField.bottomAnchor.constraint(equalTo: box.bottomAnchor)
-        ])
+    /// Lets a tile switch between lime (on) and white (off), e.g. Lock card.
+    var isHighlightedTile = false {
+        didSet { applyColors() }
     }
+
+    func setLabel(_ title: String, symbol: String? = nil) {
+        configuration?.title = title
+        if let symbol { configuration?.image = UIImage(systemName: symbol) }
+    }
+
+    private func applyColors() {
+        guard var config = configuration else { return }
+        switch style {
+        case .primary:
+            config.baseBackgroundColor = .valeInk
+            config.baseForegroundColor = .white
+        case .outline:
+            config.baseForegroundColor = .valeInk
+            config.background.backgroundColor = .white
+            config.background.strokeColor = .valeBorder
+            config.background.strokeWidth = 1
+        case .lime:
+            config.baseForegroundColor = .valeInk
+            config.background.backgroundColor = .valeLime
+        case .white:
+            config.baseForegroundColor = .valeInk
+            config.background.backgroundColor = .white
+        case .tile:
+            config.baseForegroundColor = .valeInk
+            config.background.backgroundColor = isHighlightedTile ? .valeLime : .white
+        }
+        configuration = config
+    }
+}
+
+// MARK: - TextButton
+
+func makeTextButton(_ title: String, size: CGFloat = 14) -> UIButton {
+    var config = UIButton.Configuration.plain()
+    config.title = title
+    config.baseForegroundColor = .valeGreen
+    config.contentInsets = .zero
+    let font = UIFont.vale(size, .semibold)
+    config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+        var outgoing = incoming
+        outgoing.font = font
+        return outgoing
+    }
+    return UIButton(configuration: config)
+}
+
+// MARK: - CircleIconButton
+
+func makeCircleButton(symbol: String, size: CGFloat = 44) -> UIButton {
+    var config = UIButton.Configuration.plain()
+    config.image = UIImage(systemName: symbol)
+    config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+    config.baseForegroundColor = .valeInk
+    config.background.backgroundColor = .white
+    config.background.strokeColor = .valeBorder
+    config.background.strokeWidth = 1
+    config.cornerStyle = .capsule
+    let button = UIButton(configuration: config)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+        button.widthAnchor.constraint(equalToConstant: size),
+        button.heightAnchor.constraint(equalToConstant: size)
+    ])
+    return button
 }
