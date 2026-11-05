@@ -22,6 +22,8 @@ final class AppStore {
     private(set) var spending: Spending?
     private(set) var isLoading = false
     private(set) var errorMessage: String?
+    private(set) var quickPay: [QuickPayee] = []
+    private(set) var recentPayees: [RecentPayee] = []
 
     private let service = BankService()
 
@@ -73,6 +75,8 @@ final class AppStore {
             cards = try await service.fetchCards()
             transactions = try await service.fetchTransactions()
             spending = try await service.fetchSpending()
+            quickPay = try await service.fetchQuickPay()
+            recentPayees = try await service.fetchRecentPayees()
         } catch APIError.unauthorized(_) {
             // SessionStore has already logged the user out.
         } catch {
@@ -91,6 +95,30 @@ final class AppStore {
         let updated = try await service.setCard(card.id, locked: locked)
         if let index = cards.firstIndex(where: { $0.id == updated.id }) {
             cards[index] = updated
+        }
+        notify()
+    }
+    
+    func lookupPayee(method: PayMethod, value: String) async throws -> Payee {
+        try await service.lookupPayee(method: method, value: value)
+    }
+
+    /// Pays someone, then updates the balance and payment history on every screen.
+    func pay(from: Account, to payee: Payee, amount: Double, reference: String) async throws {
+        let request = PaymentRequest(fromAccountId: from.id, method: payee.method, payee: payee.key,
+                                     payeeName: payee.name, payeeBank: payee.bank, payeeDisplay: payee.display,
+                                     amount: amount, reference: reference)
+        let result = try await service.pay(request)
+        if let index = accounts.firstIndex(where: { $0.id == from.id }) {
+            accounts[index].balance -= result.amount
+        }
+        let entry = Transaction(id: result.id, title: payee.name,
+                                category: reference.isEmpty ? "Payment" : reference,
+                                date: result.date, amount: -result.amount, icon: "transfer")
+        transactions.insert(entry, at: 0)
+        if !recentPayees.contains(where: { $0.key == payee.key }) {
+            recentPayees.insert(RecentPayee(key: payee.key, method: payee.method, name: payee.name,
+                                            bank: payee.bank, display: payee.display, lastPaid: result.date), at: 0)
         }
         notify()
     }
@@ -115,6 +143,22 @@ final class AppStore {
         transactions.insert(entry, at: 0)
         notify()
     }
+    
+    func isInQuickPay(_ payee: Payee) -> Bool {
+        quickPay.contains { $0.key == payee.key }
+    }
+
+    func addToQuickPay(_ payee: Payee, nickname: String) async throws {
+        let saved = try await service.addQuickPay(payee, nickname: nickname)
+        quickPay.append(saved)
+        notify()
+    }
+
+    func removeFromQuickPay(_ item: QuickPayee) async throws {
+        try await service.removeQuickPay(key: item.key)
+        quickPay.removeAll { $0.key == item.key }
+        notify()
+    }
 
     /// Removes all data from memory (on logout).
     func clear() {
@@ -125,5 +169,7 @@ final class AppStore {
         spending = nil
         errorMessage = nil
         notify()
+        quickPay = []
+        recentPayees = []
     }
 }

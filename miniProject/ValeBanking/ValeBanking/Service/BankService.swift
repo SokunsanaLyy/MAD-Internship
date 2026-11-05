@@ -65,4 +65,35 @@ struct BankService {
                               body: request,
                               headers: ["Idempotency-Key": UUID().uuidString])
     }
+    
+    /// POST /payees/lookup → lookup account owner
+    func lookupPayee(method: PayMethod, value: String) async throws -> Payee {
+        try await client.send(.post, "payees/lookup", body: PayeeLookupRequest(method: method, value: value))
+    }
+
+    /// POST /payments → pay someone else
+    func pay(_ request: PaymentRequest) async throws -> PaymentResult {
+        try await client.send(.post, "payments", body: request,
+                              headers: ["Idempotency-Key": UUID().uuidString])
+    }
+    
+    // MARK: Quick pay
+    
+    func fetchRecentPayees() async throws -> [RecentPayee] {
+        try await client.get("payees/recent")
+    }
+
+    func fetchQuickPay() async throws -> [QuickPayee] {
+        try await client.get("quickpay")
+    }
+
+    func addQuickPay(_ payee: Payee, nickname: String) async throws -> QuickPayee {
+        try await client.send(.post, "quickpay",
+                              body: QuickPayRequest(key: payee.key, method: payee.method, name: payee.name,
+                                                    bank: payee.bank, display: payee.display, nickname: nickname))
+    }
+
+    func removeQuickPay(key: String) async throws {
+        try await client.sendWithoutResponse(.delete, "quickpay/\(key)")
+    }
 }

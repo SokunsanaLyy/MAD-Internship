@@ -88,6 +88,75 @@ struct Spending: Codable {
     }
 }
 
+enum PayMethod: String, Codable {
+    case account, payid
+}
+
+struct PayeeLookupRequest: Codable {
+    let method: PayMethod
+    let value: String
+}
+
+struct Payee: Codable {
+    let key: String
+    let method: PayMethod
+    let name: String
+    let bank: String
+    let display: String
+}
+
+struct PaymentRequest: Codable {
+    let fromAccountId: String
+    let method: PayMethod
+    let payee: String
+    let payeeName: String
+    let payeeBank: String
+    let payeeDisplay: String
+    let amount: Double
+    let reference: String
+}
+
+struct PaymentResult: Codable {
+    let id: String
+    let status: String
+    let fromAccountId: String
+    let payeeName: String
+    let amount: Double
+    let reference: String
+    let date: String
+}
+
+struct QuickPayee: Codable {
+    let key: String
+    let method: PayMethod
+    let name: String
+    let bank: String
+    let display: String
+    let nickname: String
+
+    var payee: Payee { Payee(key: key, method: method, name: name, bank: bank, display: display) }
+}
+
+struct QuickPayRequest: Codable {
+    let key: String
+    let method: PayMethod
+    let name: String
+    let bank: String
+    let display: String
+    let nickname: String
+}
+
+struct RecentPayee: Codable {
+    let key: String
+    let method: PayMethod
+    let name: String
+    let bank: String
+    let display: String
+    let lastPaid: String
+
+    var payee: Payee { Payee(key: key, method: method, name: name, bank: bank, display: display) }
+}
+
 // MARK: - Request and response bodies
 
 struct LoginRequest: Codable {
