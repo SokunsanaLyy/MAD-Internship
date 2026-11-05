@@ -21,17 +21,26 @@ final class ValeButton: UIButton {
         self.style = style
         super.init(frame: .zero)
 
+        let isQuickAction = style == .lime || style == .white     // Pay, Transfer, Details
+
         var config: UIButton.Configuration = style == .primary ? .filled() : .plain()
         config.title = title
-        config.imagePadding = style == .tile ? 10 : 8
+        config.imagePadding = style == .tile ? 10 : (isQuickAction ? 6 : 8)
         config.imagePlacement = style == .tile ? .top : (trailingIcon ? .trailing : .leading)
-        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: style == .tile ? 18 : 14,
-                                                                                  weight: .semibold)
+        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(
+            pointSize: style == .tile ? 18 : (isQuickAction ? 12 : 14),
+            weight: .semibold)
         if let symbol { config.image = UIImage(systemName: symbol) }
+
+        // Quick actions share a row of three, so keep their side padding small
+        if isQuickAction {
+            config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
+        }
+        config.titleLineBreakMode = .byTruncatingTail
 
         config.background.cornerRadius = 14
         config.cornerStyle = .fixed
-        let font = UIFont.vale(style == .tile ? 13 : 16, .semibold)
+        let font = UIFont.vale(style == .tile ? 13 : (isQuickAction ? 14 : 16), .semibold)
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = font

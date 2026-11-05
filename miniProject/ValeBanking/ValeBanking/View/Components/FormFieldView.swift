@@ -49,6 +49,12 @@ final class FormFieldView: UIView {
         textField.rightView = button
         textField.rightViewMode = .always
     }
+    
+    func setTitle(_ title: String, placeholder: String) {
+        titleLabel.text = title
+        textField.placeholder = placeholder
+        textField.accessibilityLabel = title
+    }
 
     private func setupViews() {
         box.applyCardStyle(radius: 14)
