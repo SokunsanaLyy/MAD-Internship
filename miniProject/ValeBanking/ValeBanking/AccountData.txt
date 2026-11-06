@@ -1,0 +1,13 @@
+
+Account Login:
+    
+    email: any email
+    pwds: Vale@2026
+    verification code:
+
+To Pay:
+
+    Phone Number:
+    0412 345 678 - Alex Chen
+
+    

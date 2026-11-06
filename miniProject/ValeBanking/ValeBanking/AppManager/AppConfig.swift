@@ -11,7 +11,7 @@ import UIKit
 // Settings used across the app. Change them here, not inside screens.
 enum AppConfig {
     /// Mockoon "Vale API" environment. The Simulator reaches your Mac through localhost.
-    static let apiBaseURL = URL(string: "http://localhost:3002")!
+    static let apiBaseURL = URL(string: "http://localhost:3000")!
     static let requestTimeout: TimeInterval = 15
     static let otpLength = 6
     static let resendSeconds = 30

@@ -11,42 +11,60 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+    private var privacyCover: UIView?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+    func scene(_ scene: UIScene,
+               willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = scene as? UIWindowScene else { return }
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
+
+        SessionStore.shared.onChange = { [weak self] state in
+            self?.showRoot(for: state, animated: true)
+        }
+        showRoot(for: SessionStore.shared.state, animated: false)
+        window.makeKeyAndVisible()
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+    // MARK: - Root switching
+
+    private func showRoot(for state: SessionStore.State, animated: Bool) {
+        guard let window else { return }
+
+        switch state {
+        case .signedOut:
+            let navigation = UINavigationController(rootViewController: LoginViewController())
+            navigation.setNavigationBarHidden(true, animated: false)
+            window.rootViewController = navigation
+        case .signedIn:
+            window.rootViewController = MainTabBarController()
+        }
+
+        if animated {
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
+        }
+    }
+
+    // MARK: - Privacy cover (app switcher)
+
+    func sceneWillResignActive(_ scene: UIScene) {
+        guard let window, privacyCover == nil else { return }
+        let cover = UIView(frame: window.bounds)
+        cover.backgroundColor = .valeInk
+        let logo = UIImageView(symbol: "leaf.fill", size: 44, color: .valeLime)
+        cover.addSubviews(logo)
+        NSLayoutConstraint.activate([
+            logo.centerXAnchor.constraint(equalTo: cover.centerXAnchor),
+            logo.centerYAnchor.constraint(equalTo: cover.centerYAnchor)
+        ])
+        window.addSubview(cover)
+        privacyCover = cover
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        privacyCover?.removeFromSuperview()
+        privacyCover = nil
     }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
-
-
 }
 
