@@ -122,9 +122,7 @@ final class AppStore {
         }
         notify()
     }
-
-    /// Moves money between the user's own accounts.
-    /// After the server confirms, both balances and the payment history update on every screen.
+ 
     func transfer(from: Account, to: Account, amount: Double, note: String) async throws {
         let request = TransferRequest(fromAccountId: from.id, toAccountId: to.id, amount: amount, note: note)
         let result = try await service.transfer(request)
