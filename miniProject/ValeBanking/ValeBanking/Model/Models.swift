@@ -7,6 +7,25 @@
 
 import Foundation
 
+
+// MARK: - Sign up
+
+/// POST /auth/signup  (sent)
+struct SignUpRequest: Codable {
+    let fullName: String
+    let email: String
+    let phone: String
+    let password: String
+}
+
+/// POST /auth/signup  (received)
+struct SignUpResponse: Codable {
+    let id: String
+    let fullName: String
+    let email: String
+    let createdAt: String
+}
+
 // MARK: - Data from the Vale API
 
 /// GET /me
@@ -88,6 +107,8 @@ struct Spending: Codable {
     }
 }
 
+// MARK: - Pay someone
+
 enum PayMethod: String, Codable {
     case account, payid
 }
@@ -125,6 +146,8 @@ struct PaymentResult: Codable {
     let reference: String
     let date: String
 }
+
+// MARK: - Quick pay
 
 struct QuickPayee: Codable {
     let key: String

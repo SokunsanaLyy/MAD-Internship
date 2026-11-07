@@ -14,6 +14,11 @@ struct BankService {
 
     // MARK: Auth
 
+    /// POST /auth/signup → creates the account
+    func signUp(_ request: SignUpRequest) async throws -> SignUpResponse {
+        try await client.send(.post, "auth/signup", body: request, authorized: false)
+    }
+    
     /// POST /auth/login → sends a 6-digit code to the user's phone
     func login(email: String, password: String) async throws -> LoginResponse {
         try await client.send(.post, "auth/login",

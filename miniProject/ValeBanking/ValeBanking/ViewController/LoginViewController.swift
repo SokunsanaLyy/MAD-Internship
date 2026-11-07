@@ -130,7 +130,13 @@ final class LoginViewController: ScrollStackViewController {
         passkeyButton.on { [weak self] in self?.showAlert("Passkey", Constants.notInDemo) }
         forgotButton.on { [weak self] in self?.showAlert("Forgot password", Constants.notInDemo) }
         helpButton.on { [weak self] in self?.showAlert("Need help?", "Demo sign in: any email, password Vale@2026, code 123456.") }
-        openAccountButton.on { [weak self] in self?.showAlert("Open an account", Constants.notInDemo) }
+        openAccountButton.on { [weak self] in
+            let signUp = SignUpViewController()
+            signUp.onCreated = { email in
+                self?.emailField.textField.text = email      
+            }
+            self?.navigationController?.pushViewController(signUp, animated: true)
+        }
     }
 
     private func bindViewModel() {
