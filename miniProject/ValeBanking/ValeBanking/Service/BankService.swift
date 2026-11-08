@@ -62,7 +62,7 @@ struct BankService {
     // MARK: Actions
     func setCard(_ id: String, locked: Bool) async throws -> Card {
         try await client.send(.patch, "cards/\(id)",
-                              body: CardStatusRequest(status: locked ? "locked" : "active"))
+                              body: CardStatusRequest(status: locked ? .locked : .active))
     }
 
     func transfer(_ request: TransferRequest) async throws -> TransferResult {

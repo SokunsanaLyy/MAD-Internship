@@ -128,7 +128,7 @@ final class ProfileViewController: ScrollStackViewController {
             ListRowView(symbol: account.symbol,
                         title: account.name,
                         subtitle: "\(Format.masked(account.last4)) · \(Format.money(account.balance))",
-                        accessory: .status(account.status == "active" ? "Active" : account.status.capitalized))
+                        accessory: .status(account.isActive ? "Active" : account.status.capitalized))
         }
         rows.forEach { $0.on { [weak self] in self?.showAlert("Account details", Constants.comingSoon) } }
         accountsGroup.setRows(rows)

@@ -40,16 +40,26 @@ struct User: Codable {
     var initial: String { String(firstName.prefix(1)).uppercased() }
 }
 
+enum AccountType: String, Codable {
+    case checking, savings
+}
+
+
+enum CardStatus: String, Codable {
+    case active, locked
+}
+
 struct Account: Codable {
     let id: String
     let name: String
-    let type: String
+    let type: AccountType
     let last4: String
     let currency: String
     var balance: Double
     let status: String
 
-    var isSavings: Bool { type == "savings" }
+    var isSavings: Bool { type == .savings }
+    var isActive: Bool { status == "active" }
     var symbol: String { isSavings ? "leaf" : "wallet.pass" }
 }
 
@@ -58,10 +68,10 @@ struct Card: Codable {
     let holderName: String
     let last4: String
     let kind: String
-    var status: String        
+    var status: CardStatus
     let linkedAccountId: String
 
-    var isLocked: Bool { status == "locked" }
+    var isLocked: Bool { status == .locked }
 }
 
 struct Transaction: Codable {
@@ -205,7 +215,7 @@ struct TokenResponse: Codable {
 }
 
 struct CardStatusRequest: Codable {
-    let status: String
+    let status: CardStatus
 }
 
 struct TransferRequest: Codable {
