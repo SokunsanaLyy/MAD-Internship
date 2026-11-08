@@ -86,7 +86,7 @@ final class PayViewController: ScrollStackViewController {
         amountField.textAlignment = .center
         amountField.keyboardType = .decimalPad
         amountField.accessibilityLabel = "Amount in US dollars"
-        amountField.inputAccessoryView = makeDoneToolbar()
+        amountField.inputAccessoryView = UIToolbar.done { [weak self] in self?.view.endEditing(true) }
         availableLabel.textAlignment = .center
 
         referenceField.textField.returnKeyType = .done
@@ -198,16 +198,6 @@ final class PayViewController: ScrollStackViewController {
         let label = UILabel(text: text.uppercased(), font: .vale(12, .semibold), color: .valeMuted)
         label.accessibilityTraits = .header
         return label
-    }
-
-    private func makeDoneToolbar() -> UIToolbar {
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        toolbar.items = [
-            UIBarButtonItem(systemItem: .flexibleSpace),
-            UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.view.endEditing(true) })
-        ]
-        return toolbar
     }
 
     // MARK: - Setup Actions
@@ -334,7 +324,9 @@ final class PayViewController: ScrollStackViewController {
         identifierField.setTitle(PayeeInput.title(for: viewModel.method),
                                  placeholder: PayeeInput.placeholder(for: viewModel.method))
         identifierField.textField.keyboardType = isAccount ? .numberPad : .emailAddress
-        identifierField.textField.inputAccessoryView = isAccount ? makeDoneToolbar() : nil
+        identifierField.textField.inputAccessoryView = isAccount
+            ? UIToolbar.done(action: { [weak self] in self?.view.endEditing(true) })
+            : nil
         identifierField.textField.reloadInputViews()
         renderPayee(nil)
     }

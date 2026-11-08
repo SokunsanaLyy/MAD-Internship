@@ -102,6 +102,19 @@ extension UIView {
     }
 }
 
+// MARK: - UIToolbar
+extension UIToolbar {
+    static func done(action: @escaping () -> Void) -> UIToolbar {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        toolbar.items = [
+            UIBarButtonItem(systemItem: .flexibleSpace),
+            UIBarButtonItem(systemItem: .done, primaryAction: UIAction { _ in action() })
+        ]
+        return toolbar
+    }
+}
+
 // MARK: - UITableView
 extension UITableView {
     /// Table header views don't size themselves with Auto Layout. Call this in viewDidLayoutSubviews.

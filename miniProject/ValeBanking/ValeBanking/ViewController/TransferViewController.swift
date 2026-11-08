@@ -64,27 +64,16 @@ final class TransferViewController: ScrollStackViewController {
         amountField.textAlignment = .center
         amountField.keyboardType = .decimalPad
         amountField.accessibilityLabel = "Amount in US dollars"
-        amountField.inputAccessoryView = makeDoneToolbar()
+        amountField.inputAccessoryView = UIToolbar.done { [weak self] in self?.view.endEditing(true) }
         availableLabel.textAlignment = .center
         let amountSection = UIStackView(axis: .vertical, spacing: 6, views: [amountField, availableLabel])
 
         noteField.textField.returnKeyType = .done
-        noteField.textField.inputAccessoryView = makeDoneToolbar()
+        noteField.textField.inputAccessoryView = UIToolbar.done { [weak self] in self?.view.endEditing(true) }
 
         let sections: [UIView] = [accountsSection, amountSection, noteField, errorLabel, sendButton]
         sections.forEach(contentStack.addArrangedSubview)
         contentStack.spacing = 20
-    }
-
-    /// Done button above the number pad (the decimal pad has no return key).
-    private func makeDoneToolbar() -> UIToolbar {
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        toolbar.items = [
-            UIBarButtonItem(systemItem: .flexibleSpace),
-            UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.view.endEditing(true) })
-        ]
-        return toolbar
     }
 
     // MARK: - Setup Actions

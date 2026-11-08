@@ -84,17 +84,6 @@ final class AddQuickPayViewController: ScrollStackViewController {
         contentStack.setCustomSpacing(24, after: payeeHint)
     }
 
-    
-    private func makeDoneToolbar() -> UIToolbar {
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        toolbar.items = [
-            UIBarButtonItem(systemItem: .flexibleSpace),
-            UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.findPerson() })
-        ]
-        return toolbar
-    }
-
     // MARK: - Setup Actions
 
     private func setupActions() {
@@ -189,7 +178,9 @@ final class AddQuickPayViewController: ScrollStackViewController {
         let method = viewModel.method
         identifierField.setTitle(PayeeInput.title(for: method), placeholder: PayeeInput.placeholder(for: method))
         identifierField.textField.keyboardType = method == .account ? .numberPad : .emailAddress
-        identifierField.textField.inputAccessoryView = method == .account ? makeDoneToolbar() : nil
+        identifierField.textField.inputAccessoryView = method == .account
+            ? UIToolbar.done(action: { [weak self] in self?.findPerson() })
+            : nil
         identifierField.textField.reloadInputViews()
         renderPayee(nil)
     }
