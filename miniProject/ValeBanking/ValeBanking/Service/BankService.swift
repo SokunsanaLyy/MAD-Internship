@@ -64,6 +64,10 @@ struct BankService {
         try await client.send(.patch, "cards/\(id)",
                               body: CardStatusRequest(status: locked ? .locked : .active))
     }
+    
+    func setCardLimits(_ id: String, limits: CardLimits) async throws -> Card {
+        try await client.send(.patch, "cards/\(id)/limits", body: limits)
+    }
 
     func transfer(_ request: TransferRequest) async throws -> TransferResult {
         try await client.send(.post, "transfers",

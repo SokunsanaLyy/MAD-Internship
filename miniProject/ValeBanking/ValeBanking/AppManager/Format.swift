@@ -54,6 +54,10 @@ enum Format{
         return shortDateFormatter.string(from: date)
     }
     
+    static func apiDate(_ date: Date = Date()) -> String {
+        apiDateFormatter.string(from: date)
+    }
+    
     static func todayHeader(_ date: Date = Date()) -> String{
         headerDateFormatter.string(from: date).uppercased()
     }

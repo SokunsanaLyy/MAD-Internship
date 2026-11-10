@@ -41,6 +41,8 @@ final class PayViewModel {
     private(set) var payee: Payee?
 
     var from: Account? { fromSavings ? store.savings : store.checking }
+    
+    var remainingToday: Double? { store.remainingToday }
 
     var quickPay: [QuickPayee] { store.quickPay }
 
@@ -99,6 +101,9 @@ final class PayViewModel {
         guard let from else { return "Your accounts haven't loaded yet." }
         guard let amount = parseAmount(text), amount > 0 else { return "Enter an amount greater than $0." }
         guard amount <= from.balance else { return "That's more than the \(Format.money(from.balance)) available." }
+        if let remaining = remainingToday, let limit = AppStore.shared.dailyLimit, amount > remaining {
+            return "This is over your \(Format.money(limit)) daily limit. You can increase it in Card → Card limits."
+        }
         let decimals = text.split(separator: ".").dropFirst().first?.count ?? 0
         guard decimals <= 2 else { return "Use at most 2 decimal places." }
         return nil

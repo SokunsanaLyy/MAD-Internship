@@ -70,9 +70,17 @@ struct Card: Codable {
     let kind: String
     var status: CardStatus
     let linkedAccountId: String
+    var limits: CardLimits?          
 
     var isLocked: Bool { status == .locked }
 }
+
+struct CardLimits: Codable {
+    let dailySpend: Double
+    let atmWithdrawal: Double
+}
+
+typealias CardLimitsRequest = CardLimits
 
 struct Transaction: Codable {
     let id: String
