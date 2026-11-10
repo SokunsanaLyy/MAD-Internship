@@ -1,5 +1,5 @@
 {
-  "uuid": "17bdd3eb-2c4c-4cb2-a1a6-3badff900d4b",
+  "uuid": "40d529ec-59e8-4a02-a8b9-3325c6c49805",
   "lastMigration": 33,
   "name": "Vale API",
   "endpointPrefix": "",
@@ -9,15 +9,15 @@
   "folders": [],
   "routes": [
     {
-      "uuid": "1795017f-78da-4f06-904a-eeffeaa8c9e0",
+      "uuid": "03274257-37bb-4b98-b127-c586a49770d8",
       "type": "http",
       "documentation": "People you have paid before, newest first",
       "method": "get",
       "endpoint": "payees/recent",
       "responses": [
         {
-          "uuid": "7f988cda-1b1e-448a-83d4-35aa21fec8a6",
-          "body": "{{{stringify (reverse (dataRaw 'recents'))}}}",
+          "uuid": "9018b189-c4fe-4327-acfc-880b28bb7ff6",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{{stringify (reverse (dataRaw 'recents' @uid))}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Recent payees",
@@ -33,9 +33,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -43,7 +50,7 @@
           "callbacks": []
         },
         {
-          "uuid": "5bb049ac-2900-464a-a4c8-1b5d6908320d",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -67,15 +74,15 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "5e8a3e7f-3a9e-4f83-a169-597ba5bea9fd",
+      "uuid": "80236607-4248-42be-b941-b4b47fa4feea",
       "type": "http",
       "documentation": "Quick pay list (saved payees)",
       "method": "get",
       "endpoint": "quickpay",
       "responses": [
         {
-          "uuid": "f3678ec9-78dd-4cbb-b085-e23c73016d98",
-          "body": "{{{stringify (filter (dataRaw 'favourites') (object removed=false))}}}",
+          "uuid": "919f6410-d0cc-46c9-bee5-89ccf9cb6bb3",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{{stringify (filter (dataRaw 'favourites' @uid) (object removed=false))}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Quick pay",
@@ -91,9 +98,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -101,7 +115,7 @@
           "callbacks": []
         },
         {
-          "uuid": "c6bf2cc6-bfab-445f-b698-a0954cf7ac9c",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -125,14 +139,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "7cbe6e02-0a22-42e3-86fc-c3387ae9e6ec",
+      "uuid": "d8c3b96e-c40c-423c-b1ec-9bd7aaebca10",
       "type": "http",
       "documentation": "Save a payee to Quick pay. Body: { key, method, name, bank, display, nickname }",
       "method": "post",
       "endpoint": "quickpay",
       "responses": [
         {
-          "uuid": "39396e44-f2eb-4fde-b8f0-31e18aad4ced",
+          "uuid": "9160489a-6cb7-49cf-bb74-d52bc0a420b7",
           "body": "{\n  \"error\": \"already_saved\",\n  \"message\": \"This person is already in Quick pay.\"\n}",
           "latency": 0,
           "statusCode": 409,
@@ -152,7 +166,14 @@
             },
             {
               "target": "templating",
-              "modifier": "{{#if (find (dataRaw 'favourites') (object key=(body 'key') removed=false))}}dup{{/if}}",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (find (dataRaw 'favourites' @uid) (object key=(body 'key') removed=false))}}dup{{/if}}",
               "value": "dup",
               "invert": false,
               "operator": "equals"
@@ -166,7 +187,7 @@
           "callbacks": []
         },
         {
-          "uuid": "d966b563-835c-4910-874c-3b1647f11d3f",
+          "uuid": "611252e1-c8a3-4875-8b0a-74fa8d5b0483",
           "body": "{\n  \"error\": \"invalid_input\",\n  \"message\": \"Missing payee details.\"\n}",
           "latency": 0,
           "statusCode": 422,
@@ -185,6 +206,13 @@
               "operator": "regex"
             },
             {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
               "target": "body",
               "modifier": "key",
               "value": "",
@@ -200,8 +228,8 @@
           "callbacks": []
         },
         {
-          "uuid": "4571bd82-187b-49da-852e-dbb2666c0b9e",
-          "body": "{{setVar 'nick' (bodyRaw 'nickname')}}{{#unless @nick}}{{setVar 'nick' (bodyRaw 'name')}}{{/unless}}{{setData 'push' 'favourites' '' (object key=(bodyRaw 'key') method=(bodyRaw 'method') name=(bodyRaw 'name') bank=(bodyRaw 'bank') display=(bodyRaw 'display') nickname=@nick removed=false)}}{\n  \"key\": \"{{body 'key'}}\",\n  \"method\": \"{{body 'method'}}\",\n  \"name\": \"{{body 'name'}}\",\n  \"bank\": \"{{body 'bank'}}\",\n  \"display\": \"{{body 'display'}}\",\n  \"nickname\": \"{{@nick}}\"\n}",
+          "uuid": "5790a05c-5f9a-4c3c-8f8c-c4900a936900",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{setVar 'nick' (bodyRaw 'nickname')}}{{#unless @nick}}{{setVar 'nick' (bodyRaw 'name')}}{{/unless}}{{setData 'push' 'favourites' @uid (object key=(bodyRaw 'key') method=(bodyRaw 'method') name=(bodyRaw 'name') bank=(bodyRaw 'bank') display=(bodyRaw 'display') nickname=@nick removed=false)}}{\n  \"key\": \"{{body 'key'}}\",\n  \"method\": \"{{body 'method'}}\",\n  \"name\": \"{{body 'name'}}\",\n  \"bank\": \"{{body 'bank'}}\",\n  \"display\": \"{{body 'display'}}\",\n  \"nickname\": \"{{@nick}}\"\n}",
           "latency": 0,
           "statusCode": 201,
           "label": "201 Saved",
@@ -217,9 +245,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -227,7 +262,7 @@
           "callbacks": []
         },
         {
-          "uuid": "7becd200-2227-40a2-8713-03301956f4e8",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -251,15 +286,15 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "5277318e-a77b-4662-ad39-e6edff9bdf97",
+      "uuid": "f7ca8cac-bdd8-42b4-abd7-f0d125f9e066",
       "type": "http",
       "documentation": "Remove a payee from Quick pay",
       "method": "delete",
       "endpoint": "quickpay/:key",
       "responses": [
         {
-          "uuid": "97d34b15-8062-46b5-a112-6262e0b9333e",
-          "body": "{{#each (dataRaw 'favourites')}}{{#if (eq key (urlParam 'key'))}}{{setData 'set' 'favourites' (concat @index '.removed') true}}{{/if}}{{/each}}",
+          "uuid": "169a32af-0b87-42bb-a5e2-6266c27017d9",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#each (dataRaw 'favourites' @uid)}}{{#if (eq key (urlParam 'key'))}}{{setData 'set' 'favourites' (concat @uid '.' @index '.removed') true}}{{/if}}{{/each}}",
           "latency": 0,
           "statusCode": 204,
           "label": "204 Removed",
@@ -278,7 +313,14 @@
             },
             {
               "target": "templating",
-              "modifier": "{{#if (find (dataRaw 'favourites') (object key=(urlParam 'key') removed=false))}}yes{{/if}}",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (find (dataRaw 'favourites' @uid) (object key=(urlParam 'key') removed=false))}}yes{{/if}}",
               "value": "yes",
               "invert": false,
               "operator": "equals"
@@ -292,7 +334,7 @@
           "callbacks": []
         },
         {
-          "uuid": "48d5d424-0901-456c-a0a3-19446cebe24c",
+          "uuid": "e1b38b4f-d54d-419b-9d4e-5a3767a5fd17",
           "body": "{\n  \"error\": \"not_found\",\n  \"message\": \"That person is not in Quick pay.\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -309,9 +351,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -319,7 +368,7 @@
           "callbacks": []
         },
         {
-          "uuid": "c53e6aef-b8b0-4e40-a615-9089065674ce",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -343,14 +392,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "71e7b5b7-612d-406e-a795-44d4c79f1d85",
+      "uuid": "3098ed9d-ead1-4f64-a679-317427745dab",
       "type": "http",
       "documentation": "Find who an account number or PayID belongs to. Body: { method, value }",
       "method": "post",
       "endpoint": "payees/lookup",
       "responses": [
         {
-          "uuid": "ee25299f-619a-40e3-9643-be618a8f90ed",
+          "uuid": "7dd18e78-726a-4984-a40c-bda31103b4da",
           "body": "{{{stringify (find (dataRaw 'payees') (object key=(lowercase (body 'value')) method=(body 'method')))}}}",
           "latency": 0,
           "statusCode": 200,
@@ -370,6 +419,13 @@
             },
             {
               "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "templating",
               "modifier": "{{#if (find (dataRaw 'payees') (object key=(lowercase (body 'value')) method=(body 'method')))}}found{{/if}}",
               "value": "found",
               "invert": false,
@@ -384,7 +440,7 @@
           "callbacks": []
         },
         {
-          "uuid": "da454d74-f9bf-48bb-a32f-916a1d42c275",
+          "uuid": "16d376f9-e8cc-487f-9ea4-fa00db1e38cc",
           "body": "{\n  \"error\": \"payee_not_found\",\n  \"message\": \"We couldn't find anyone with those details. Check them and try again.\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -401,9 +457,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -411,7 +474,7 @@
           "callbacks": []
         },
         {
-          "uuid": "42c43e44-c1b1-408b-82dd-3117f95f06e6",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -435,14 +498,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "b76f6cef-6e9b-4d00-8154-5f6340b783e3",
+      "uuid": "51b326de-4798-4fe6-91cc-ef6997aa6129",
       "type": "http",
       "documentation": "Pay someone. Body: { fromAccountId, method, payee, payeeName, payeeBank, payeeDisplay, amount, reference }",
       "method": "post",
       "endpoint": "payments",
       "responses": [
         {
-          "uuid": "84360d83-4477-454b-8223-a7d97003ffa5",
+          "uuid": "74de7a6e-2453-4640-90ff-af8f143dd328",
           "body": "{\n  \"error\": \"invalid_amount\",\n  \"message\": \"Enter an amount greater than $0.\"\n}",
           "latency": 0,
           "statusCode": 422,
@@ -462,6 +525,13 @@
             },
             {
               "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "templating",
               "modifier": "{{#if (lte (bodyRaw 'amount' 0) 0)}}bad{{/if}}",
               "value": "bad",
               "invert": false,
@@ -476,7 +546,7 @@
           "callbacks": []
         },
         {
-          "uuid": "05fa221d-40cf-4926-bbba-fb889447336a",
+          "uuid": "170c982e-cfda-404d-abd2-43898caffbbd",
           "body": "{\n  \"error\": \"insufficient_funds\",\n  \"message\": \"There isn't enough money in this account.\"\n}",
           "latency": 0,
           "statusCode": 422,
@@ -496,7 +566,14 @@
             },
             {
               "target": "templating",
-              "modifier": "{{#if (eq (body 'fromAccountId') 'acc_sav')}}{{#if (gt (bodyRaw 'amount' 0) (dataRaw 'accounts' '1.balance'))}}over{{/if}}{{else}}{{#if (gt (bodyRaw 'amount' 0) (dataRaw 'accounts' '0.balance'))}}over{{/if}}{{/if}}",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (eq (body 'fromAccountId') 'acc_sav')}}{{#if (gt (bodyRaw 'amount' 0) (dataRaw 'accounts' (concat @uid '.1.balance')))}}over{{/if}}{{else}}{{#if (gt (bodyRaw 'amount' 0) (dataRaw 'accounts' (concat @uid '.0.balance')))}}over{{/if}}{{/if}}",
               "value": "over",
               "invert": false,
               "operator": "equals"
@@ -510,8 +587,8 @@
           "callbacks": []
         },
         {
-          "uuid": "29051f1a-f183-467c-8ea6-54be3feb65ee",
-          "body": "{{setVar 'amt' (bodyRaw 'amount' 0)}}{{setVar 'pid' (concat 'pay_' (faker 'string.numeric' 6))}}{{setVar 'today' (now 'yyyy-MM-dd')}}{{setVar 'cat' (body 'reference')}}{{#unless @cat}}{{setVar 'cat' 'Payment'}}{{/unless}}{{#if (eq (body 'fromAccountId') 'acc_sav')}}{{setVar 'idx' '1'}}{{else}}{{setVar 'idx' '0'}}{{/if}}{{setData 'dec' 'accounts' (concat @idx '.balance') @amt}}{{setData 'set' 'accounts' '0.balance' (divide (round (multiply (dataRaw 'accounts' '0.balance') 100)) 100)}}{{setData 'set' 'accounts' '1.balance' (divide (round (multiply (dataRaw 'accounts' '1.balance') 100)) 100)}}{{setData 'push' 'transactions' '' (object id=@pid title=(bodyRaw 'payeeName') category=@cat date=@today amount=(subtract 0 @amt) icon='transfer')}}{{#unless (find (dataRaw 'recents') (object key=(body 'payee')))}}{{setData 'push' 'recents' '' (object key=(bodyRaw 'payee') method=(bodyRaw 'method') name=(bodyRaw 'payeeName') bank=(bodyRaw 'payeeBank') display=(bodyRaw 'payeeDisplay') lastPaid=@today)}}{{/unless}}{\n  \"id\": \"{{@pid}}\",\n  \"status\": \"completed\",\n  \"fromAccountId\": \"{{body 'fromAccountId'}}\",\n  \"payeeName\": \"{{body 'payeeName'}}\",\n  \"amount\": {{@amt}},\n  \"reference\": \"{{body 'reference' ''}}\",\n  \"date\": \"{{@today}}\"\n}",
+          "uuid": "63531df5-aa58-494f-a79b-5e0af723310b",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{setVar 'amt' (bodyRaw 'amount' 0)}}{{setVar 'pid' (concat 'pay_' (faker 'string.numeric' 6))}}{{setVar 'today' (now 'yyyy-MM-dd')}}{{setVar 'cat' (body 'reference')}}{{#unless @cat}}{{setVar 'cat' 'Payment'}}{{/unless}}{{#if (eq (body 'fromAccountId') 'acc_sav')}}{{setVar 'idx' '1'}}{{else}}{{setVar 'idx' '0'}}{{/if}}{{setData 'dec' 'accounts' (concat @uid '.' @idx '.balance') @amt}}{{setData 'set' 'accounts' (concat @uid '.0.balance') (divide (round (multiply (dataRaw 'accounts' (concat @uid '.0.balance')) 100)) 100)}}{{setData 'set' 'accounts' (concat @uid '.1.balance') (divide (round (multiply (dataRaw 'accounts' (concat @uid '.1.balance')) 100)) 100)}}{{setData 'push' 'transactions' @uid (object id=@pid title=(bodyRaw 'payeeName') category=@cat date=@today amount=(subtract 0 @amt) icon='transfer')}}{{#unless (find (dataRaw 'recents' @uid) (object key=(body 'payee')))}}{{setData 'push' 'recents' @uid (object key=(bodyRaw 'payee') method=(bodyRaw 'method') name=(bodyRaw 'payeeName') bank=(bodyRaw 'payeeBank') display=(bodyRaw 'payeeDisplay') lastPaid=@today)}}{{/unless}}{\n  \"id\": \"{{@pid}}\",\n  \"status\": \"completed\",\n  \"fromAccountId\": \"{{body 'fromAccountId'}}\",\n  \"payeeName\": \"{{body 'payeeName'}}\",\n  \"amount\": {{@amt}},\n  \"reference\": \"{{body 'reference' ''}}\",\n  \"date\": \"{{@today}}\"\n}",
           "latency": 0,
           "statusCode": 201,
           "label": "201 Payment sent",
@@ -527,9 +604,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -537,7 +621,7 @@
           "callbacks": []
         },
         {
-          "uuid": "2581bf53-f86b-4e10-9456-b589bbded13d",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -561,14 +645,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "b83d9cc3-0f5b-45cd-9fc5-5645539a5ae5",
+      "uuid": "070c8d55-b654-4cd3-a441-b9dd7a4478da",
       "type": "http",
       "documentation": "Step 1 of sign in. A signed-up email + password, or the demo password Vale@2026 with any email.",
       "method": "post",
       "endpoint": "auth/login",
       "responses": [
         {
-          "uuid": "f4a51fe6-2ff7-4d2c-916f-93918f7baa70",
+          "uuid": "283fd201-4993-4a28-a5df-f3b21aff7f0d",
           "body": "{{setVar 'person' (find (dataRaw 'signups') (object email=(lowercase (body 'email'))))}}{\n  \"challengeId\": \"chl_{{@person.id}}\",\n  \"phoneLast4\": \"{{substr @person.phone -4}}\",\n  \"expiresIn\": 300\n}",
           "latency": 0,
           "statusCode": 200,
@@ -595,7 +679,7 @@
           "callbacks": []
         },
         {
-          "uuid": "99daa7d4-5e38-4173-8815-661f5148e1cb",
+          "uuid": "7a6d7e05-0804-47aa-9df7-d52eca39a635",
           "body": "{\n  \"challengeId\": \"chl_8f2k\",\n  \"phoneLast4\": \"4829\",\n  \"expiresIn\": 300\n}",
           "latency": 0,
           "statusCode": 200,
@@ -622,7 +706,7 @@
           "callbacks": []
         },
         {
-          "uuid": "6f0292a7-6521-461f-87a1-a7183d63f537",
+          "uuid": "8e29540c-c79d-4abf-a44a-64ee0ab052e6",
           "body": "{\n  \"error\": \"invalid_credentials\",\n  \"message\": \"Incorrect email or password.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -646,14 +730,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "be83ced7-cfa5-49b0-b7db-384580ffcfeb",
+      "uuid": "851bbaa9-bf41-4d10-b1bb-b96f72c7a7c0",
       "type": "http",
       "documentation": "Create an account. Body: { fullName, email, phone, password }. Login details go to the credentials bucket.",
       "method": "post",
       "endpoint": "auth/signup",
       "responses": [
         {
-          "uuid": "3e5c46b8-c54d-40ca-b79d-a546c4293a73",
+          "uuid": "05f87dc6-6164-461a-952f-579d81d9cc4b",
           "body": "{\n  \"error\": \"invalid_input\",\n  \"message\": \"Please fill in your name, email, phone and password.\"\n}",
           "latency": 0,
           "statusCode": 422,
@@ -701,7 +785,7 @@
           "callbacks": []
         },
         {
-          "uuid": "0e9432f6-c130-46b5-8a5c-86b13c7b2886",
+          "uuid": "1abde512-a178-4c95-842d-7f581ed7e8f6",
           "body": "{\n  \"error\": \"email_taken\",\n  \"message\": \"An account with this email already exists. Try signing in.\"\n}",
           "latency": 0,
           "statusCode": 409,
@@ -728,8 +812,8 @@
           "callbacks": []
         },
         {
-          "uuid": "07954a14-8e4e-4e89-9e47-c4e0cb6156a6",
-          "body": "{{setVar 'uid' (concat 'usr_' (faker 'string.numeric' 4))}}{{setVar 'created' (now 'yyyy-MM-dd')}}{{setVar 'fn' (substr (bodyRaw 'fullName') 0 (indexOf (bodyRaw 'fullName') ' '))}}{{setData 'push' 'signups' '' (object id=@uid firstName=@fn fullName=(bodyRaw 'fullName') email=(lowercase (body 'email')) phone=(bodyRaw 'phone') createdAt=@created)}}{{setData 'push' 'credentials' '' (object userId=@uid email=(lowercase (body 'email')) password=(bodyRaw 'password'))}}{\n  \"id\": \"{{@uid}}\",\n  \"fullName\": \"{{body 'fullName'}}\",\n  \"email\": \"{{lowercase (body 'email')}}\",\n  \"createdAt\": \"{{@created}}\",\n  \"message\": \"Account created. You can now sign in.\"\n}",
+          "uuid": "ebc05e21-39a0-407a-97e3-35e7860271ab",
+          "body": "{{setVar 'uid' (concat 'usr_' (faker 'string.numeric' 4))}}{{setVar 'created' (now 'yyyy-MM-dd')}}{{setVar 'fn' (substr (bodyRaw 'fullName') 0 (indexOf (bodyRaw 'fullName') ' '))}}{{setData 'push' 'signups' '' (object id=@uid firstName=@fn fullName=(bodyRaw 'fullName') email=(lowercase (body 'email')) phone=(bodyRaw 'phone') createdAt=@created)}}{{setData 'push' 'credentials' '' (object userId=@uid email=(lowercase (body 'email')) password=(bodyRaw 'password'))}}{{setVar 'chk' (faker 'string.numeric' 4)}}{{setData 'set' 'accounts' @uid (array (object id='acc_chk' name='Everyday checking' type='checking' last4=@chk currency='USD' balance=1000 status='active') (object id='acc_sav' name='Savings' type='savings' last4=(faker 'string.numeric' 4) currency='USD' balance=500 status='active'))}}{{setData 'set' 'cards' @uid (array (object id='card_001' holderName=(uppercase (bodyRaw 'fullName')) last4=@chk kind='debit' status='active' linkedAccountId='acc_chk'))}}{{setData 'set' 'transactions' @uid (array (object id='txn_welcome' title='Welcome to Vale' category='Opening deposit' date=@created amount=1500 icon='salary'))}}{{setData 'set' 'recents' @uid (array)}}{{setData 'set' 'favourites' @uid (array)}}{{setData 'set' 'insights' @uid (object month=(now 'MMMM yyyy') periodLabel='This month' total=0 changePercent=0 weeks=(array) categories=(array) income=1500 netCashFlow=1500)}}{\n  \"id\": \"{{@uid}}\",\n  \"fullName\": \"{{body 'fullName'}}\",\n  \"email\": \"{{lowercase (body 'email')}}\",\n  \"createdAt\": \"{{@created}}\",\n  \"message\": \"Account created. You can now sign in.\"\n}",
           "latency": 0,
           "statusCode": 201,
           "label": "201 Account created",
@@ -752,14 +836,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "fe241b96-ed5c-441c-8793-26830791319b",
+      "uuid": "c2c96814-4d42-4f2c-9e9a-9c3c439c9ad3",
       "type": "http",
       "documentation": "TESTING ONLY: see who has signed up. A real API would never expose this.",
       "method": "get",
       "endpoint": "signups",
       "responses": [
         {
-          "uuid": "0743f28f-15dd-4368-9a93-32fea79beff6",
+          "uuid": "71ab2d63-a336-4c0a-827e-33456754d797",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -767,7 +851,7 @@
           "headers": [],
           "bodyType": "DATABUCKET",
           "filePath": "",
-          "databucketID": "8np1",
+          "databucketID": "qn9w",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -783,14 +867,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "2bdc4f23-e58c-409f-916e-cf76b58542a9",
+      "uuid": "b2db504c-2ff6-410e-bf5f-d38ac2f66e3e",
       "type": "http",
       "documentation": "Step 2 of sign in. Demo code: 123456.",
       "method": "post",
       "endpoint": "auth/verify",
       "responses": [
         {
-          "uuid": "786fe258-4de3-42f0-9384-40627877e287",
+          "uuid": "94f53e1a-747e-4ebb-ba1f-0dc91d20e282",
           "body": "{\n  \"accessToken\": \"{{#if (eq (body 'challengeId') 'chl_8f2k')}}vale-demo-7f3a9c2e{{else}}vale-{{replace (body 'challengeId') 'chl_' ''}}{{/if}}\",\n  \"tokenType\": \"Bearer\",\n  \"expiresIn\": 900\n}",
           "latency": 0,
           "statusCode": 200,
@@ -817,7 +901,7 @@
           "callbacks": []
         },
         {
-          "uuid": "40adf742-462d-4629-993b-82dc04fbbc86",
+          "uuid": "8bb03c9b-2a75-4e09-b116-8c742f659416",
           "body": "{\n  \"error\": \"invalid_code\",\n  \"message\": \"That code is incorrect. Please try again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -841,14 +925,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "1cc487e9-42d6-4c2f-adcc-d8fc8f4423ce",
+      "uuid": "e6498e71-fe7d-48e6-9461-0537b31fab73",
       "type": "http",
       "documentation": "Signed-in user profile (the signed-up person, or the demo user)",
       "method": "get",
       "endpoint": "me",
       "responses": [
         {
-          "uuid": "3e9e8761-047d-4b62-80b3-0771ab999aed",
+          "uuid": "9d298e3a-e71f-4884-8a3c-8e31aa46828f",
           "body": "{{setVar 'uid' (replace (header 'Authorization') 'Bearer vale-' '')}}{{setVar 'person' (find (dataRaw 'signups') (object id=@uid))}}{{#if @person}}{\n  \"id\": \"{{@person.id}}\",\n  \"firstName\": \"{{@person.firstName}}\",\n  \"fullName\": \"{{@person.fullName}}\",\n  \"email\": \"{{@person.email}}\",\n  \"phoneLast4\": \"{{substr @person.phone -4}}\",\n  \"verified\": true\n}{{else}}{\n  \"id\": \"usr_001\",\n  \"firstName\": \"Sokunsana\",\n  \"fullName\": \"Sokunsana Ly\",\n  \"email\": \"sokunsana@example.com\",\n  \"phoneLast4\": \"4829\",\n  \"verified\": true\n}{{/if}}",
           "latency": 0,
           "statusCode": 200,
@@ -865,9 +949,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -875,7 +966,7 @@
           "callbacks": []
         },
         {
-          "uuid": "e965890a-6002-4949-a327-5e02a8a05e80",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -899,22 +990,22 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "8da6bfdc-ece2-44b4-84da-3f25c7554930",
+      "uuid": "33f8e5d6-8c40-4ce9-b2c7-e3bcf031a40f",
       "type": "http",
-      "documentation": "Checking and savings accounts (from the accounts data bucket)",
+      "documentation": "The signed-in user's checking and savings accounts",
       "method": "get",
       "endpoint": "accounts",
       "responses": [
         {
-          "uuid": "75e696eb-819e-4020-90b3-3d957504433f",
-          "body": "",
+          "uuid": "fe1bf0b6-33f4-4b1a-b353-83e4e3f63c0d",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{{stringify (dataRaw 'accounts' @uid)}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Accounts",
           "headers": [],
-          "bodyType": "DATABUCKET",
+          "bodyType": "INLINE",
           "filePath": "",
-          "databucketID": "5cdo",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [
             {
@@ -923,9 +1014,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -933,7 +1031,7 @@
           "callbacks": []
         },
         {
-          "uuid": "d52e540f-2dfc-4d01-8a0a-c0e651e46512",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -957,22 +1055,22 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "bf3c182d-dfc0-4b13-99cf-5546fc0bff3d",
+      "uuid": "12d18301-876e-461e-b038-e86e07a47a8c",
       "type": "http",
-      "documentation": "Debit cards (from the cards data bucket)",
+      "documentation": "The signed-in user's debit card",
       "method": "get",
       "endpoint": "cards",
       "responses": [
         {
-          "uuid": "d5184218-5ee6-4ead-94ad-e7f4d1298c5d",
-          "body": "",
+          "uuid": "1d0e3816-d565-4e45-a8c4-48491e2479cc",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{{stringify (dataRaw 'cards' @uid)}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Cards",
           "headers": [],
-          "bodyType": "DATABUCKET",
+          "bodyType": "INLINE",
           "filePath": "",
-          "databucketID": "i4cz",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [
             {
@@ -981,9 +1079,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -991,7 +1096,7 @@
           "callbacks": []
         },
         {
-          "uuid": "d6ebf131-4bb9-439f-b9a4-ec274d8e8b20",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -1015,15 +1120,15 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "9076de31-39bb-4673-90d6-94db9d70a469",
+      "uuid": "5cb60e57-3ed6-4dfc-a320-50c41a38b772",
       "type": "http",
       "documentation": "Lock or unlock a card. Body: { \"status\": \"locked\" | \"active\" }",
       "method": "patch",
       "endpoint": "cards/:id",
       "responses": [
         {
-          "uuid": "a4960eba-b9dc-4ff4-9dba-b3d2b1e1461b",
-          "body": "{{setData 'set' 'cards' '0.status' (body 'status' 'active')}}{{{stringify (dataRaw 'cards' '0')}}}",
+          "uuid": "ba924b53-2fd0-47f6-8d3b-c83a69589ceb",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{setData 'set' 'cards' (concat @uid '.0.status') (body 'status' 'active')}}{{{stringify (dataRaw 'cards' (concat @uid '.0'))}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Card updated",
@@ -1039,9 +1144,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -1049,7 +1161,7 @@
           "callbacks": []
         },
         {
-          "uuid": "7aa6f7c5-4d22-42de-a3f4-e29a2b4ba8e6",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -1073,15 +1185,15 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "8864440f-9398-46c5-9c2a-9497a1b033d3",
+      "uuid": "feb67997-610d-4ea7-8852-064c6813ebe5",
       "type": "http",
       "documentation": "Payment history, newest first (from the transactions data bucket)",
       "method": "get",
       "endpoint": "transactions",
       "responses": [
         {
-          "uuid": "cbf24a38-5266-40c1-90c2-888c29311c11",
-          "body": "{{{stringify (reverse (dataRaw 'transactions'))}}}",
+          "uuid": "ea78077d-8eb4-4a35-852e-2607e9464b0b",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{{stringify (reverse (dataRaw 'transactions' @uid))}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Transactions",
@@ -1097,9 +1209,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -1107,7 +1226,7 @@
           "callbacks": []
         },
         {
-          "uuid": "fe2c6b09-c62b-4f62-b221-0dc634c6a933",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -1131,15 +1250,15 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "5c491398-5a90-47d6-b222-7b627eb43c14",
+      "uuid": "911d7616-3f05-428f-a52b-25d7423f19f2",
       "type": "http",
-      "documentation": "Dashboard numbers for this month",
+      "documentation": "The signed-in user's dashboard numbers for this month",
       "method": "get",
       "endpoint": "insights/spending",
       "responses": [
         {
-          "uuid": "471d4ac2-9bad-48eb-8d5c-a1838a370e57",
-          "body": "{\n  \"month\": \"October 2026\",\n  \"periodLabel\": \"Oct 1–17\",\n  \"total\": 2184.6,\n  \"changePercent\": -12,\n  \"weeks\": [\n    {\n      \"label\": \"Oct 1–4\",\n      \"amount\": 680\n    },\n    {\n      \"label\": \"Oct 5–11\",\n      \"amount\": 825\n    },\n    {\n      \"label\": \"Oct 12–17\",\n      \"amount\": 679.6\n    }\n  ],\n  \"categories\": [\n    {\n      \"name\": \"Bills & essentials\",\n      \"amount\": 1230\n    },\n    {\n      \"name\": \"Food & drink\",\n      \"amount\": 486.4\n    },\n    {\n      \"name\": \"Shopping\",\n      \"amount\": 318.2\n    },\n    {\n      \"name\": \"Transport\",\n      \"amount\": 150\n    }\n  ],\n  \"income\": 6400,\n  \"netCashFlow\": 4215.4\n}",
+          "uuid": "ed9ead66-86f8-4e3a-9155-9892667244cb",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{{stringify (dataRaw 'insights' @uid)}}}",
           "latency": 0,
           "statusCode": 200,
           "label": "200 Spending",
@@ -1155,9 +1274,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -1165,7 +1291,7 @@
           "callbacks": []
         },
         {
-          "uuid": "7554dc27-270b-4eae-9993-d76470b88023",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -1189,14 +1315,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "8f229610-370c-4d9f-9c0e-dcf92e4cb30c",
+      "uuid": "6fff190f-d6d5-4de8-9b9e-cdb92ce4e01f",
       "type": "http",
       "documentation": "Own-account transfer. Note \"decline\" returns 422 for testing.",
       "method": "post",
       "endpoint": "transfers",
       "responses": [
         {
-          "uuid": "f6e3115d-a559-4231-80ce-5ef0ecea62a7",
+          "uuid": "555c7f25-638c-4f0b-bf00-bf3fcc302362",
           "body": "{\n  \"error\": \"declined\",\n  \"message\": \"This transfer was declined. Please try again later.\"\n}",
           "latency": 0,
           "statusCode": 422,
@@ -1208,18 +1334,25 @@
           "sendFileAsBody": false,
           "rules": [
             {
-              "target": "body",
-              "modifier": "note",
-              "value": "decline",
-              "invert": false,
-              "operator": "equals"
-            },
-            {
               "target": "header",
               "modifier": "Authorization",
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "note",
+              "value": "decline",
+              "invert": false,
+              "operator": "equals"
             }
           ],
           "rulesOperator": "AND",
@@ -1230,8 +1363,8 @@
           "callbacks": []
         },
         {
-          "uuid": "1cf7e928-4599-4de5-b6d9-5e00fb3c485d",
-          "body": "{{setVar 'amt' (bodyRaw 'amount' 0)}}{{setVar 'tid' (concat 'trf_' (faker 'string.numeric' 6))}}{{setVar 'today' (now 'yyyy-MM-dd')}}{{setVar 'cat' (body 'note')}}{{#unless @cat}}{{setVar 'cat' 'Own transfer'}}{{/unless}}{{#if (eq (body 'fromAccountId') 'acc_chk')}}{{setData 'dec' 'accounts' '0.balance' @amt}}{{setData 'inc' 'accounts' '1.balance' @amt}}{{setData 'push' 'transactions' '' (object id=@tid title='To Savings' category=@cat date=@today amount=(subtract 0 @amt) icon='own-transfer')}}{{else}}{{setData 'inc' 'accounts' '0.balance' @amt}}{{setData 'dec' 'accounts' '1.balance' @amt}}{{setData 'push' 'transactions' '' (object id=@tid title='From Savings' category=@cat date=@today amount=@amt icon='own-transfer')}}{{/if}}{{setData 'set' 'accounts' '0.balance' (divide (round (multiply (dataRaw 'accounts' '0.balance') 100)) 100)}}{{setData 'set' 'accounts' '1.balance' (divide (round (multiply (dataRaw 'accounts' '1.balance') 100)) 100)}}{\n  \"id\": \"{{@tid}}\",\n  \"status\": \"completed\",\n  \"fromAccountId\": \"{{body 'fromAccountId'}}\",\n  \"toAccountId\": \"{{body 'toAccountId'}}\",\n  \"amount\": {{@amt}},\n  \"note\": \"{{body 'note' ''}}\",\n  \"date\": \"{{@today}}\"\n}",
+          "uuid": "d31b63b7-527c-4892-ae99-5d53a7838715",
+          "body": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{setVar 'amt' (bodyRaw 'amount' 0)}}{{setVar 'tid' (concat 'trf_' (faker 'string.numeric' 6))}}{{setVar 'today' (now 'yyyy-MM-dd')}}{{setVar 'cat' (body 'note')}}{{#unless @cat}}{{setVar 'cat' 'Own transfer'}}{{/unless}}{{#if (eq (body 'fromAccountId') 'acc_chk')}}{{setData 'dec' 'accounts' (concat @uid '.0.balance') @amt}}{{setData 'inc' 'accounts' (concat @uid '.1.balance') @amt}}{{setData 'push' 'transactions' @uid (object id=@tid title='To Savings' category=@cat date=@today amount=(subtract 0 @amt) icon='own-transfer')}}{{else}}{{setData 'inc' 'accounts' (concat @uid '.0.balance') @amt}}{{setData 'dec' 'accounts' (concat @uid '.1.balance') @amt}}{{setData 'push' 'transactions' @uid (object id=@tid title='From Savings' category=@cat date=@today amount=@amt icon='own-transfer')}}{{/if}}{{setData 'set' 'accounts' (concat @uid '.0.balance') (divide (round (multiply (dataRaw 'accounts' (concat @uid '.0.balance')) 100)) 100)}}{{setData 'set' 'accounts' (concat @uid '.1.balance') (divide (round (multiply (dataRaw 'accounts' (concat @uid '.1.balance')) 100)) 100)}}{\n  \"id\": \"{{@tid}}\",\n  \"status\": \"completed\",\n  \"fromAccountId\": \"{{body 'fromAccountId'}}\",\n  \"toAccountId\": \"{{body 'toAccountId'}}\",\n  \"amount\": {{@amt}},\n  \"note\": \"{{body 'note' ''}}\",\n  \"date\": \"{{@today}}\"\n}",
           "latency": 0,
           "statusCode": 201,
           "label": "201 Transfer completed",
@@ -1247,9 +1380,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -1257,7 +1397,7 @@
           "callbacks": []
         },
         {
-          "uuid": "65c1428f-196c-40a7-a12d-3c4c58e1ac7c",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -1281,14 +1421,14 @@
       "streamingInterval": 0
     },
     {
-      "uuid": "03106a94-d09d-48e3-8407-cf1426d601a0",
+      "uuid": "f944ff43-6e70-4d2f-b966-0ea43968b523",
       "type": "http",
       "documentation": "Ends the session on the server",
       "method": "post",
       "endpoint": "auth/logout",
       "responses": [
         {
-          "uuid": "acda0b52-08c2-4ecf-997d-e2a6aabad234",
+          "uuid": "c8f9816b-a015-4891-88c5-3c73b16a93cc",
           "body": "",
           "latency": 0,
           "statusCode": 204,
@@ -1305,9 +1445,16 @@
               "value": "^Bearer (vale-demo-7f3a9c2e|vale-usr_[0-9]+)$",
               "invert": false,
               "operator": "regex"
+            },
+            {
+              "target": "templating",
+              "modifier": "{{setVar 'uid' (replace (replace (header 'Authorization') 'Bearer vale-' '') 'demo-7f3a9c2e' 'demo')}}{{#if (dataRaw 'accounts' @uid)}}yes{{/if}}",
+              "value": "yes",
+              "invert": false,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -1315,7 +1462,7 @@
           "callbacks": []
         },
         {
-          "uuid": "5b4a9c5d-d20f-4d15-a6d7-e015e5f1643e",
+          "uuid": "c9abb2da-6726-4652-8d13-0446907a875f",
           "body": "{\n  \"error\": \"unauthorized\",\n  \"message\": \"Your session has expired. Please sign in again.\"\n}",
           "latency": 0,
           "statusCode": 401,
@@ -1342,75 +1489,75 @@
   "rootChildren": [
     {
       "type": "route",
-      "uuid": "1795017f-78da-4f06-904a-eeffeaa8c9e0"
+      "uuid": "03274257-37bb-4b98-b127-c586a49770d8"
     },
     {
       "type": "route",
-      "uuid": "5e8a3e7f-3a9e-4f83-a169-597ba5bea9fd"
+      "uuid": "80236607-4248-42be-b941-b4b47fa4feea"
     },
     {
       "type": "route",
-      "uuid": "7cbe6e02-0a22-42e3-86fc-c3387ae9e6ec"
+      "uuid": "d8c3b96e-c40c-423c-b1ec-9bd7aaebca10"
     },
     {
       "type": "route",
-      "uuid": "5277318e-a77b-4662-ad39-e6edff9bdf97"
+      "uuid": "f7ca8cac-bdd8-42b4-abd7-f0d125f9e066"
     },
     {
       "type": "route",
-      "uuid": "71e7b5b7-612d-406e-a795-44d4c79f1d85"
+      "uuid": "3098ed9d-ead1-4f64-a679-317427745dab"
     },
     {
       "type": "route",
-      "uuid": "b76f6cef-6e9b-4d00-8154-5f6340b783e3"
+      "uuid": "51b326de-4798-4fe6-91cc-ef6997aa6129"
     },
     {
       "type": "route",
-      "uuid": "b83d9cc3-0f5b-45cd-9fc5-5645539a5ae5"
+      "uuid": "070c8d55-b654-4cd3-a441-b9dd7a4478da"
     },
     {
       "type": "route",
-      "uuid": "be83ced7-cfa5-49b0-b7db-384580ffcfeb"
+      "uuid": "851bbaa9-bf41-4d10-b1bb-b96f72c7a7c0"
     },
     {
       "type": "route",
-      "uuid": "fe241b96-ed5c-441c-8793-26830791319b"
+      "uuid": "c2c96814-4d42-4f2c-9e9a-9c3c439c9ad3"
     },
     {
       "type": "route",
-      "uuid": "2bdc4f23-e58c-409f-916e-cf76b58542a9"
+      "uuid": "b2db504c-2ff6-410e-bf5f-d38ac2f66e3e"
     },
     {
       "type": "route",
-      "uuid": "1cc487e9-42d6-4c2f-adcc-d8fc8f4423ce"
+      "uuid": "e6498e71-fe7d-48e6-9461-0537b31fab73"
     },
     {
       "type": "route",
-      "uuid": "8da6bfdc-ece2-44b4-84da-3f25c7554930"
+      "uuid": "33f8e5d6-8c40-4ce9-b2c7-e3bcf031a40f"
     },
     {
       "type": "route",
-      "uuid": "bf3c182d-dfc0-4b13-99cf-5546fc0bff3d"
+      "uuid": "12d18301-876e-461e-b038-e86e07a47a8c"
     },
     {
       "type": "route",
-      "uuid": "9076de31-39bb-4673-90d6-94db9d70a469"
+      "uuid": "5cb60e57-3ed6-4dfc-a320-50c41a38b772"
     },
     {
       "type": "route",
-      "uuid": "8864440f-9398-46c5-9c2a-9497a1b033d3"
+      "uuid": "feb67997-610d-4ea7-8852-064c6813ebe5"
     },
     {
       "type": "route",
-      "uuid": "5c491398-5a90-47d6-b222-7b627eb43c14"
+      "uuid": "911d7616-3f05-428f-a52b-25d7423f19f2"
     },
     {
       "type": "route",
-      "uuid": "8f229610-370c-4d9f-9c0e-dcf92e4cb30c"
+      "uuid": "6fff190f-d6d5-4de8-9b9e-cdb92ce4e01f"
     },
     {
       "type": "route",
-      "uuid": "03106a94-d09d-48e3-8407-cf1426d601a0"
+      "uuid": "f944ff43-6e70-4d2f-b966-0ea43968b523"
     }
   ],
   "proxyMode": false,
@@ -1446,60 +1593,67 @@
   ],
   "data": [
     {
-      "uuid": "7dbdbef2-d966-4d13-b7cf-71f4269d1144",
-      "id": "5cdo",
+      "uuid": "46f93243-4b8d-4161-940e-451558fac0db",
+      "id": "tty2",
       "name": "accounts",
-      "documentation": "Balances. Changed by POST /transfers.",
-      "value": "[\n  {\n    \"id\": \"acc_chk\",\n    \"name\": \"Everyday checking\",\n    \"type\": \"checking\",\n    \"last4\": \"4829\",\n    \"currency\": \"USD\",\n    \"balance\": 8450.8,\n    \"status\": \"active\"\n  },\n  {\n    \"id\": \"acc_sav\",\n    \"name\": \"Savings\",\n    \"type\": \"savings\",\n    \"last4\": \"9012\",\n    \"currency\": \"USD\",\n    \"balance\": 12300,\n    \"status\": \"active\"\n  }\n]"
+      "documentation": "Balances per user. Changed by POST /transfers and POST /payments.",
+      "value": "{\n  \"demo\": [\n    {\n      \"id\": \"acc_chk\",\n      \"name\": \"Everyday checking\",\n      \"type\": \"checking\",\n      \"last4\": \"4829\",\n      \"currency\": \"USD\",\n      \"balance\": 8450.8,\n      \"status\": \"active\"\n    },\n    {\n      \"id\": \"acc_sav\",\n      \"name\": \"Savings\",\n      \"type\": \"savings\",\n      \"last4\": \"9012\",\n      \"currency\": \"USD\",\n      \"balance\": 12300,\n      \"status\": \"active\"\n    }\n  ]\n}"
     },
     {
-      "uuid": "099c9b4d-513e-4015-a33d-52a33a143a16",
-      "id": "i4cz",
+      "uuid": "5f757b73-f1d6-412f-bb3c-2577493fb524",
+      "id": "4v3z",
       "name": "cards",
-      "documentation": "Card status. Changed by PATCH /cards/:id.",
-      "value": "[\n  {\n    \"id\": \"card_001\",\n    \"holderName\": \"SOKUNSANA LY\",\n    \"last4\": \"4829\",\n    \"kind\": \"debit\",\n    \"status\": \"active\",\n    \"linkedAccountId\": \"acc_chk\"\n  }\n]"
+      "documentation": "Card per user. Changed by PATCH /cards/:id.",
+      "value": "{\n  \"demo\": [\n    {\n      \"id\": \"card_001\",\n      \"holderName\": \"SOKUNSANA LY\",\n      \"last4\": \"4829\",\n      \"kind\": \"debit\",\n      \"status\": \"active\",\n      \"linkedAccountId\": \"acc_chk\"\n    }\n  ]\n}"
     },
     {
-      "uuid": "348b1adf-5ad3-4ab6-be22-0785f2c7e026",
-      "id": "b94x",
+      "uuid": "a0e67cd5-df33-47d0-9fcd-dbcbd181c8ae",
+      "id": "n1yb",
+      "name": "insights",
+      "documentation": "Dashboard numbers per user.",
+      "value": "{\n  \"demo\": {\n    \"month\": \"October 2026\",\n    \"periodLabel\": \"Oct 1–17\",\n    \"total\": 2184.6,\n    \"changePercent\": -12,\n    \"weeks\": [\n      {\n        \"label\": \"Oct 1–4\",\n        \"amount\": 680\n      },\n      {\n        \"label\": \"Oct 5–11\",\n        \"amount\": 825\n      },\n      {\n        \"label\": \"Oct 12–17\",\n        \"amount\": 679.6\n      }\n    ],\n    \"categories\": [\n      {\n        \"name\": \"Bills & essentials\",\n        \"amount\": 1230\n      },\n      {\n        \"name\": \"Food & drink\",\n        \"amount\": 486.4\n      },\n      {\n        \"name\": \"Shopping\",\n        \"amount\": 318.2\n      },\n      {\n        \"name\": \"Transport\",\n        \"amount\": 150\n      }\n    ],\n    \"income\": 6400,\n    \"netCashFlow\": 4215.4\n  }\n}"
+    },
+    {
+      "uuid": "ff842adb-1400-4503-ab50-8ec5f8ad553e",
+      "id": "mpax",
       "name": "payees",
       "documentation": "People you can pay, one row per account number or PayID. Used by POST /payees/lookup.",
       "value": "[\n  {\n    \"key\": \"100200300\",\n    \"method\": \"account\",\n    \"name\": \"Alex Chen\",\n    \"bank\": \"Vale Bank\",\n    \"display\": \"•• 0300\"\n  },\n  {\n    \"key\": \"0412345678\",\n    \"method\": \"payid\",\n    \"name\": \"Alex Chen\",\n    \"bank\": \"Vale Bank\",\n    \"display\": \"0412 345 678\"\n  },\n  {\n    \"key\": \"alex.chen@example.com\",\n    \"method\": \"payid\",\n    \"name\": \"Alex Chen\",\n    \"bank\": \"Vale Bank\",\n    \"display\": \"alex.chen@example.com\"\n  },\n  {\n    \"key\": \"200300400\",\n    \"method\": \"account\",\n    \"name\": \"Dara Chan\",\n    \"bank\": \"Mekong Bank\",\n    \"display\": \"•• 0400\"\n  },\n  {\n    \"key\": \"0423456789\",\n    \"method\": \"payid\",\n    \"name\": \"Dara Chan\",\n    \"bank\": \"Mekong Bank\",\n    \"display\": \"0423 456 789\"\n  },\n  {\n    \"key\": \"dara.chan@example.com\",\n    \"method\": \"payid\",\n    \"name\": \"Dara Chan\",\n    \"bank\": \"Mekong Bank\",\n    \"display\": \"dara.chan@example.com\"\n  },\n  {\n    \"key\": \"300400500\",\n    \"method\": \"account\",\n    \"name\": \"Mia Nguyen\",\n    \"bank\": \"Harbour Bank\",\n    \"display\": \"•• 0500\"\n  },\n  {\n    \"key\": \"mia.nguyen@example.com\",\n    \"method\": \"payid\",\n    \"name\": \"Mia Nguyen\",\n    \"bank\": \"Harbour Bank\",\n    \"display\": \"mia.nguyen@example.com\"\n  }\n]"
     },
     {
-      "uuid": "6636e4d1-37ec-449b-a96d-f497c19e8084",
-      "id": "3l96",
+      "uuid": "8e3d93c6-e5c6-45db-85f7-92d81bcd21ef",
+      "id": "23jo",
       "name": "recents",
-      "documentation": "People you have paid, oldest first. POST /payments adds new people. GET /payees/recent returns newest first.",
-      "value": "[\n  {\n    \"key\": \"dara.chan@example.com\",\n    \"method\": \"payid\",\n    \"name\": \"Dara Chan\",\n    \"bank\": \"Mekong Bank\",\n    \"display\": \"dara.chan@example.com\",\n    \"lastPaid\": \"2026-10-02\"\n  },\n  {\n    \"key\": \"100200300\",\n    \"method\": \"account\",\n    \"name\": \"Alex Chen\",\n    \"bank\": \"Vale Bank\",\n    \"display\": \"•• 0300\",\n    \"lastPaid\": \"2026-10-16\"\n  }\n]"
+      "documentation": "People each user has paid, oldest first. POST /payments adds new people. GET /payees/recent returns newest first.",
+      "value": "{\n  \"demo\": [\n    {\n      \"key\": \"dara.chan@example.com\",\n      \"method\": \"payid\",\n      \"name\": \"Dara Chan\",\n      \"bank\": \"Mekong Bank\",\n      \"display\": \"dara.chan@example.com\",\n      \"lastPaid\": \"2026-10-02\"\n    },\n    {\n      \"key\": \"100200300\",\n      \"method\": \"account\",\n      \"name\": \"Alex Chen\",\n      \"bank\": \"Vale Bank\",\n      \"display\": \"•• 0300\",\n      \"lastPaid\": \"2026-10-16\"\n    }\n  ]\n}"
     },
     {
-      "uuid": "722866e6-4512-4ab8-b38e-d72029f47ede",
-      "id": "1e7u",
+      "uuid": "31dfb981-9da8-4ecf-abf8-12b64bb2bc5d",
+      "id": "a9hz",
       "name": "favourites",
-      "documentation": "Quick pay list. Removed entries are kept with removed: true and hidden by GET /quickpay.",
-      "value": "[\n  {\n    \"key\": \"300400500\",\n    \"method\": \"account\",\n    \"name\": \"Mia Nguyen\",\n    \"bank\": \"Harbour Bank\",\n    \"display\": \"•• 0500\",\n    \"nickname\": \"Rent\",\n    \"removed\": false\n  }\n]"
+      "documentation": "Quick pay list per user. Removed entries are kept with removed: true and hidden by GET /quickpay.",
+      "value": "{\n  \"demo\": [\n    {\n      \"key\": \"300400500\",\n      \"method\": \"account\",\n      \"name\": \"Mia Nguyen\",\n      \"bank\": \"Harbour Bank\",\n      \"display\": \"•• 0500\",\n      \"nickname\": \"Rent\",\n      \"removed\": false\n    }\n  ]\n}"
     },
     {
-      "uuid": "6b0877eb-f7fd-4c38-aa1b-dad818221fb3",
-      "id": "kn82",
+      "uuid": "47c9688a-1179-4066-9c89-43ffae2c5960",
+      "id": "gdo9",
       "name": "credentials",
       "documentation": "Login details of people who signed up. MOCK ONLY: a real server stores a password hash, never the password. No route returns this bucket.",
       "value": "[]"
     },
     {
-      "uuid": "85b4c0bb-a913-492b-9019-a3a5d864231b",
-      "id": "8np1",
+      "uuid": "463190ca-9316-4c62-ac65-f7f83a0248cd",
+      "id": "qn9w",
       "name": "signups",
       "documentation": "People who signed up. Added to by POST /auth/signup. Passwords are never saved.",
       "value": "[\n  {\n    \"id\": \"usr_001\",\n    \"firstName\": \"Sokunsana\",\n    \"fullName\": \"Sokunsana Ly\",\n    \"email\": \"sokunsana@example.com\",\n    \"phone\": \"0400111222\",\n    \"createdAt\": \"2026-09-28\"\n  }\n]"
     },
     {
-      "uuid": "996014c9-ba46-4892-a27c-eab72e56dc09",
-      "id": "0rbu",
+      "uuid": "b8d475f3-5ac9-4283-819f-ab7fa379c51d",
+      "id": "3tyd",
       "name": "transactions",
-      "documentation": "Payment history, oldest first. Transfers are added here.",
-      "value": "[\n  {\n    \"id\": \"txn_101\",\n    \"title\": \"Acme Studio\",\n    \"category\": \"Salary\",\n    \"date\": \"2026-10-15\",\n    \"amount\": 3200,\n    \"icon\": \"salary\"\n  },\n  {\n    \"id\": \"txn_102\",\n    \"title\": \"Alex Chen\",\n    \"category\": \"Transfer\",\n    \"date\": \"2026-10-16\",\n    \"amount\": -45,\n    \"icon\": \"transfer\"\n  },\n  {\n    \"id\": \"txn_103\",\n    \"title\": \"Blue Bottle Coffee\",\n    \"category\": \"Food & drink\",\n    \"date\": \"2026-10-17\",\n    \"amount\": -5.8,\n    \"icon\": \"food\"\n  },\n  {\n    \"id\": \"txn_104\",\n    \"title\": \"Whole Foods Market\",\n    \"category\": \"Groceries\",\n    \"date\": \"2026-10-17\",\n    \"amount\": -86.42,\n    \"icon\": \"groceries\"\n  }\n]"
+      "documentation": "Payment history per user, oldest first. Transfers and payments are added here.",
+      "value": "{\n  \"demo\": [\n    {\n      \"id\": \"txn_101\",\n      \"title\": \"Acme Studio\",\n      \"category\": \"Salary\",\n      \"date\": \"2026-10-15\",\n      \"amount\": 3200,\n      \"icon\": \"salary\"\n    },\n    {\n      \"id\": \"txn_102\",\n      \"title\": \"Alex Chen\",\n      \"category\": \"Transfer\",\n      \"date\": \"2026-10-16\",\n      \"amount\": -45,\n      \"icon\": \"transfer\"\n    },\n    {\n      \"id\": \"txn_103\",\n      \"title\": \"Blue Bottle Coffee\",\n      \"category\": \"Food & drink\",\n      \"date\": \"2026-10-17\",\n      \"amount\": -5.8,\n      \"icon\": \"food\"\n    },\n    {\n      \"id\": \"txn_104\",\n      \"title\": \"Whole Foods Market\",\n      \"category\": \"Groceries\",\n      \"date\": \"2026-10-17\",\n      \"amount\": -86.42,\n      \"icon\": \"groceries\"\n    }\n  ]\n}"
     }
   ],
   "callbacks": []
