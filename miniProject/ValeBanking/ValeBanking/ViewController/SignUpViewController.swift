@@ -26,7 +26,7 @@ final class SignUpViewController: ScrollStackViewController {
     // MARK: - UI
 
     private let backButton = makeCircleButton(symbol: "arrow.left")
-    private let nameField = FormFieldView(title: "Full name", placeholder: "e.g. Sokunsana Ly")
+    private let nameField = FormFieldView(title: "Full name", placeholder: "e.g. Name")
     private let emailField = FormFieldView(title: "Email address", placeholder: "you@example.com")
     private let phoneField = FormFieldView(title: "Mobile number", placeholder: "e.g. 0400 111 222")
     private let passwordField = FormFieldView(title: "Password", placeholder: "At least 8 characters")
