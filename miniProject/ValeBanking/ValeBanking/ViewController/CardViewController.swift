@@ -86,7 +86,8 @@ final class CardViewController: ScrollStackViewController {
         }
         helpButton.accessibilityLabel = "Help"
         helpButton.on { [weak self] in self?.showAlert("Help", "Lock your card if you can't find it. You can unlock it at any time.") }
-        [limitsTile, walletTile].forEach { $0.on { [weak self] in self?.showAlert("Coming soon", Constants.comingSoon) } }
+        limitsTile.on { [weak self] in self?.openLimits() }
+        walletTile.on { [weak self] in self?.showAlert("Coming soon", Constants.comingSoon) }
         [pinRow, controlsRow, lostRow].forEach { $0.on { [weak self] in self?.showAlert("Coming soon", Constants.comingSoon) } }
     }
 
@@ -98,6 +99,15 @@ final class CardViewController: ScrollStackViewController {
         confirm(title, message, action: lock ? "Lock" : "Unlock", destructive: lock) { [weak self] in
             self?.setLocked(lock)
         }
+    }
+    
+    private func openLimits() {
+        let limits = UINavigationController(rootViewController: CardLimitsViewController())
+        if let sheet = limits.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(limits, animated: true)
     }
 
     private func setLocked(_ lock: Bool) {

@@ -337,7 +337,7 @@ final class PayViewController: ScrollStackViewController {
         }
         renderPayButton()
     }
-
+    
     private func renderPayee(_ payee: Payee?) {
         payeeCard.isHidden = payee == nil
         payeeHint.isHidden = payee == nil

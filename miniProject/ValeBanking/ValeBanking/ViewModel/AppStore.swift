@@ -41,6 +41,19 @@ final class AppStore {
         accounts.first { $0.id == id }
     }
 
+    var spentToday: Double {
+        let today = Format.apiDate()
+        return transactions
+            .filter { $0.date == today && $0.icon == "transfer" && $0.amount < 0 }
+            .reduce(0) { $0 - $1.amount }
+    }
+
+    var dailyLimit: Double? { card?.limits?.dailySpend }
+
+    var remainingToday: Double? {
+        dailyLimit.map { max(0, $0 - spentToday) }
+    }
+    
     // MARK: - Observers
 
     private struct Observer {
@@ -93,6 +106,15 @@ final class AppStore {
     func setCardLocked(_ locked: Bool) async throws {
         guard let card else { return }
         let updated = try await service.setCard(card.id, locked: locked)
+        if let index = cards.firstIndex(where: { $0.id == updated.id }) {
+            cards[index] = updated
+        }
+        notify()
+    }
+    
+    func setCardLimits(_ limits: CardLimits) async throws {
+        guard let card else { return }
+        let updated = try await service.setCardLimits(card.id, limits: limits)
         if let index = cards.firstIndex(where: { $0.id == updated.id }) {
             cards[index] = updated
         }
