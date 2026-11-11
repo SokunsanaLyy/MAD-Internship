@@ -15,12 +15,14 @@ final class OTPCodeView: UIView {
     var code: String { hiddenField.text ?? "" }
 
     private let length: Int
+    private let isSecure: Bool
     private let hiddenField = UITextField()
     private var boxes: [UILabel] = []
     private let row = UIStackView(axis: .horizontal, spacing: 8)
 
-    init(length: Int = AppConfig.otpLength) {
+    init(length: Int = AppConfig.otpLength, secure: Bool = false) {
         self.length = length
+        self.isSecure = secure
         super.init(frame: .zero)
         setupViews()
         setupActions()
@@ -50,9 +52,10 @@ final class OTPCodeView: UIView {
 
     private func setupViews() {
         hiddenField.keyboardType = .numberPad
-        hiddenField.textContentType = .oneTimeCode
-        hiddenField.alpha = 0.01                         // invisible but can still receive typing
-        hiddenField.accessibilityLabel = "Verification code"
+        hiddenField.textContentType = isSecure ? nil : .oneTimeCode
+        hiddenField.alpha = 0.01                        
+        hiddenField.accessibilityLabel = isSecure ? "Passcode" : "Verification code"
+        
 
         for _ in 0..<length {
             let box = UILabel(font: .vale(26, .regular))
@@ -101,7 +104,7 @@ final class OTPCodeView: UIView {
     private func render() {
         let digits = Array(code)
         for (index, box) in boxes.enumerated() {
-            box.text = index < digits.count ? String(digits[index]) : ""
+            box.text = index < digits.count ? (isSecure ? "●" : String(digits[index])) : ""
             let isCurrent = index == digits.count
             box.layer.borderColor = (isCurrent ? UIColor.valeGreen : UIColor.valeBorder).cgColor
         }

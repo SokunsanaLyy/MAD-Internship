@@ -63,9 +63,10 @@ final class SessionStore {
     }
 
     private func endSession(message: String?) {
-        guard state == .signedIn else { return }     // several 401s can arrive together: log out once
+        guard state == .signedIn else { return }
         KeychainStore.delete(KeychainKey.accessToken)
-        AppStore.shared.clear()                      // remove balances etc. from memory
+        AppLock.shared.reset()
+        AppStore.shared.clear()                     
         pendingMessage = message
         setState(.signedOut)
     }
