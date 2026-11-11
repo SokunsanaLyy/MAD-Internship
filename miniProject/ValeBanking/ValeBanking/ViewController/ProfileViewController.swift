@@ -33,6 +33,8 @@ final class ProfileViewController: ScrollStackViewController {
     private let securityRow = ListRowView(symbol: "checkmark.shield", title: "Security & sign-in", subtitle: "Password and trusted devices")
     private let faceIDRow = ListRowView(symbol: "faceid", title: "Face ID & Passkey", subtitle: "Sign in without a password",
                                         accessory: .toggle(UserDefaults.standard.bool(forKey: Constants.faceIDKey)))
+    private let passcodeRow = ListRowView(symbol: "lock", title: "Change passcode", subtitle: "The 6 digits you use to open Vale")
+    
     private let notificationsRow = ListRowView(symbol: "bell", title: "Notifications", subtitle: "Payments, alerts and reminders")
     private let appearanceRow = ListRowView(symbol: "sun.max", title: "Appearance", subtitle: "Theme and text size", accessory: .value("Light"))
     private let logoutButton = UIButton(configuration: .plain())
@@ -54,7 +56,7 @@ final class ProfileViewController: ScrollStackViewController {
             ScreenHeaderView(title: "Your profile", trailing: helpButton),
             makeProfileRow(),
             accountsGroup,
-            ListGroupView(title: "Account & security", rows: [personalRow, securityRow, faceIDRow]),
+            ListGroupView(title: "Account & security", rows: [personalRow, securityRow, passcodeRow, faceIDRow]),
             ListGroupView(title: "Preferences", rows: [notificationsRow, appearanceRow]),
             logoutButton
         ]
@@ -100,10 +102,16 @@ final class ProfileViewController: ScrollStackViewController {
             guard let self else { return }
             UserDefaults.standard.set(self.faceIDRow.toggle.isOn, forKey: Constants.faceIDKey)
         }
+        passcodeRow.on { [weak self] in self?.openChangePasscode() }
         helpButton.accessibilityLabel = "Help"
         editButton.accessibilityLabel = "Edit profile"
         let comingSoon: [UIControl] = [helpButton, editButton, personalRow, securityRow, notificationsRow, appearanceRow]
         comingSoon.forEach { $0.on { [weak self] in self?.showAlert("Coming soon", Constants.comingSoon) } }
+    }
+    
+    private func openChangePasscode() {
+        let navigation = UINavigationController(rootViewController: PasscodeViewController(mode: .change))
+        present(navigation, animated: true)
     }
 
     private func confirmLogout() {
