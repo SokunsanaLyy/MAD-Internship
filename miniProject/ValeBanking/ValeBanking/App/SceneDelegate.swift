@@ -13,6 +13,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private var privacyCover: UIView?
 
+    private var lockWindow: UIWindow?
+
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
@@ -22,9 +24,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         SessionStore.shared.onChange = { [weak self] state in
             self?.showRoot(for: state, animated: true)
+            if state == .signedIn { AppLock.shared.userSignedIn() }
         }
+        AppLock.shared.onChange = { [weak self] status in
+            self?.updateLock(for: status)
+        }
+
         showRoot(for: SessionStore.shared.state, animated: false)
         window.makeKeyAndVisible()
+
+        if SessionStore.shared.state == .signedIn {
+            AppLock.shared.appLaunchedSignedIn()
+        }
     }
 
     // MARK: - Root switching
@@ -44,6 +55,40 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if animated {
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
         }
+    }
+
+    // MARK: - App lock
+
+    private func updateLock(for status: AppLock.Status) {
+        switch status {
+        case .unlocked: hideLock()
+        case .locked: showLock(.unlock)
+        case .needsPasscode: showLock(.create)
+        }
+    }
+
+    private func showLock(_ mode: PasscodeViewModel.Mode) {
+        guard let scene = window?.windowScene else { return }
+        let lock = UIWindow(windowScene: scene)
+        lock.windowLevel = .alert + 1
+        lock.rootViewController = PasscodeViewController(mode: mode)
+        lock.makeKeyAndVisible()
+        lockWindow?.isHidden = true
+        lockWindow = lock
+    }
+
+    private func hideLock() {
+        lockWindow?.isHidden = true
+        lockWindow = nil
+        window?.makeKey()
+    }
+
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        AppLock.shared.appDidEnterBackground()
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        AppLock.shared.appWillEnterForeground()      
     }
 
     // MARK: - Privacy cover (app switcher)
@@ -67,4 +112,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         privacyCover = nil
     }
 }
-
