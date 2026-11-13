@@ -17,7 +17,7 @@ final class PasscodeViewController: ScrollStackViewController {
 
     // MARK: - UI
 
-    private let logo = IconTileView(symbol: "lock.fill", size: 56, background: .valeInk, tint: .valeLime)
+    private let logo = IconTileView(symbol: "lock.fill", size: 56, background: .valeInkFill, tint: .valeLime)
     private let titleLabel = UILabel(font: .vale(30, .light), lines: 0)
     private let subtitleLabel = UILabel(font: .vale(15), color: .valeMuted, lines: 0)
     private let codeView = OTPCodeView(length: AppLock.passcodeLength, secure: true)

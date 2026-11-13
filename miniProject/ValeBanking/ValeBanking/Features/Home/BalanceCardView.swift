@@ -16,7 +16,7 @@ final class BalanceCardView: UIView {
     private let amountLabel = UILabel(text: "—", font: .vale(44, .medium), color: .white)
     private let captionLabel = UILabel(text: "Available balance", font: .vale(13), color: .valeCardMuted)
     private let numberLabel = UILabel(font: .vale(13, .medium), color: .valeCardMuted)
-    private let lockedChip = UILabel(text: " 🔒 Card locked ", font: .vale(12, .semibold), color: .valeInk)
+    private let lockedChip = UILabel(text: " Card locked ", font: .vale(12, .semibold), color: .valeOnLime)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,7 +35,7 @@ final class BalanceCardView: UIView {
     }
 
     private func setupViews() {
-        applyCardStyle(color: .valeInk, radius: 24, border: false)
+        applyCardStyle(color: .valeInkFill, radius: 24, border: true, borderColor: .valeCardEdge)
         isAccessibilityElement = true
 
         amountLabel.adjustsFontSizeToFitWidth = true

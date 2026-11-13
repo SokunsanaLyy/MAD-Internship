@@ -44,7 +44,7 @@ final class OTPCodeView: UIView {
     }
 
     func showError(_ isError: Bool) {
-        boxes.forEach { $0.layer.borderColor = (isError ? UIColor.valeRed : UIColor.valeBorder).cgColor }
+        boxes.forEach { $0.setBorderColor(isError ? .valeRed : .valeBorder) }
         if isError { row.shake() }
     }
 
@@ -60,7 +60,7 @@ final class OTPCodeView: UIView {
         for _ in 0..<length {
             let box = UILabel(font: .vale(26, .regular))
             box.textAlignment = .center
-            box.backgroundColor = .white
+            box.backgroundColor = .valeSurface
             box.layer.cornerRadius = 12
             box.layer.cornerCurve = .continuous
             box.layer.borderWidth = 1
@@ -107,6 +107,7 @@ final class OTPCodeView: UIView {
             box.text = index < digits.count ? (isSecure ? "●" : String(digits[index])) : ""
             let isCurrent = index == digits.count
             box.layer.borderColor = (isCurrent ? UIColor.valeGreen : UIColor.valeBorder).cgColor
+            box.setBorderColor(isCurrent ? .valeGreen : .valeBorder)
         }
     }
 }

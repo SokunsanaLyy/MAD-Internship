@@ -29,7 +29,7 @@ final class FormFieldView: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     var hasError = false {
-        didSet { box.layer.borderColor = (hasError ? UIColor.valeRed : UIColor.valeBorder).cgColor }
+        didSet { box.setBorderColor(hasError ? .valeRed : .valeBorder) }
     }
 
     func addPasswordToggle() {

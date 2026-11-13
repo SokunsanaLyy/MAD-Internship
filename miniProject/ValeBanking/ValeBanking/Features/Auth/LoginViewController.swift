@@ -86,7 +86,7 @@ final class LoginViewController: ScrollStackViewController {
     }
 
     private func makeHeader() -> UIView {
-        let logo = IconTileView(symbol: "leaf.fill", size: 36, background: .valeInk, tint: .valeLime)
+        let logo = IconTileView(symbol: "leaf.fill", size: 36, background: .valeInkFill, tint: .valeLime)
         let name = UILabel(text: "vale", font: .vale(26, .medium))
         return UIStackView(axis: .horizontal, spacing: 10, alignment: .center, views: [logo, name, .spacer(), helpButton])
     }

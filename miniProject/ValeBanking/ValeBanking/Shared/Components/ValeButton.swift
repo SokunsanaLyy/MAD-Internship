@@ -77,22 +77,24 @@ final class ValeButton: UIButton {
         guard var config = configuration else { return }
         switch style {
         case .primary:
-            config.baseBackgroundColor = .valeInk
+            config.baseBackgroundColor = .valeInkFill
             config.baseForegroundColor = .white
+            config.background.strokeColor = .valeCardEdge
+            config.background.strokeWidth = 1
         case .outline:
             config.baseForegroundColor = .valeInk
-            config.background.backgroundColor = .white
+            config.background.backgroundColor = .valeSurface
             config.background.strokeColor = .valeBorder
             config.background.strokeWidth = 1
         case .lime:
-            config.baseForegroundColor = .valeInk
+            config.baseForegroundColor = .valeOnLime
             config.background.backgroundColor = .valeLime
         case .white:
             config.baseForegroundColor = .valeInk
-            config.background.backgroundColor = .white
+            config.background.backgroundColor = .valeSurface
         case .tile:
-            config.baseForegroundColor = .valeInk
-            config.background.backgroundColor = isHighlightedTile ? .valeLime : .white
+            config.baseForegroundColor = isHighlightedTile ? .valeOnLime : .valeInk
+            config.background.backgroundColor = isHighlightedTile ? .valeLime : .valeSurface
         }
         configuration = config
     }
@@ -121,7 +123,7 @@ func makeCircleButton(symbol: String, size: CGFloat = 44) -> UIButton {
     config.image = UIImage(systemName: symbol)
     config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
     config.baseForegroundColor = .valeInk
-    config.background.backgroundColor = .white
+    config.background.backgroundColor = .valeSurface
     config.background.strokeColor = .valeBorder
     config.background.strokeWidth = 1
     config.cornerStyle = .capsule

@@ -65,7 +65,12 @@ final class PayViewController: ScrollStackViewController {
 
         methodControl.selectedSegmentIndex = 0
         fromControl.selectedSegmentIndex = 0
-        [methodControl, fromControl].forEach { $0.selectedSegmentTintColor = .valeLime }
+        [methodControl, fromControl].forEach {
+            $0.selectedSegmentTintColor = .valeLime
+        }
+        [methodControl, fromControl].forEach {
+            $0.setTitleTextAttributes([.foregroundColor: UIColor.valeOnLime], for: .selected)
+        }
 
         identifierField.textField.autocorrectionType = .no
         identifierField.textField.autocapitalizationType = .none
@@ -125,7 +130,7 @@ final class PayViewController: ScrollStackViewController {
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 22)
         config.baseForegroundColor = .valeGreen
         config.titleAlignment = .center
-        config.background.backgroundColor = .valeSoftGreen
+        config.background.backgroundColor = .valeSurface
         config.background.strokeColor = .valeGreen
         config.background.strokeWidth = 1
         config.background.cornerRadius = 14
