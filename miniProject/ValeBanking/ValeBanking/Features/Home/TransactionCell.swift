@@ -13,7 +13,7 @@ final class TransactionCell: UITableViewCell {
 
     static let reuseID = "TransactionCell"
 
-    private let icon = IconTileView(symbol: "dollarsign.circle", size: 42, background: .white)
+    private let icon = IconTileView(symbol: "dollarsign.circle", size: 42, background: .valeSurface)
     private let titleLabel = UILabel(font: .vale(16, .semibold))
     private let detailLabel = UILabel(font: .vale(13), color: .valeMuted)
     private let amountLabel = UILabel(font: .vale(16, .semibold))
@@ -46,7 +46,7 @@ final class TransactionCell: UITableViewCell {
         selectionStyle = .none
         isAccessibilityElement = true
         icon.layer.borderWidth = 1
-        icon.layer.borderColor = UIColor.valeBorder.cgColor
+        icon.setBorderColor(.valeBorder)
 
         amountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         let texts = UIStackView(axis: .vertical, spacing: 3, views: [titleLabel, detailLabel])

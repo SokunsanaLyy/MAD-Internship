@@ -39,7 +39,7 @@ final class DebitCardView: UIView {
     }
 
     private func setupViews() {
-        applyCardStyle(color: .valeInk, radius: 24, border: false)
+        applyCardStyle(color: .valeInkFill, radius: 24, border: true, borderColor: .valeCardEdge)
         clipsToBounds = true
         isAccessibilityElement = true
 
