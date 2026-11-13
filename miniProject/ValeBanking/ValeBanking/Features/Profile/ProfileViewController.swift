@@ -36,7 +36,9 @@ final class ProfileViewController: ScrollStackViewController {
     private let passcodeRow = ListRowView(symbol: "lock", title: "Change passcode", subtitle: "The 6 digits you use to open Vale")
     
     private let notificationsRow = ListRowView(symbol: "bell", title: "Notifications", subtitle: "Payments, alerts and reminders")
-    private let appearanceRow = ListRowView(symbol: "sun.max", title: "Appearance", subtitle: "Theme and text size", accessory: .value("Light"))
+    private let appearanceRow = ListRowView(symbol: "circle.lefthalf.filled", title: "Appearance",
+                                            subtitle: "Light, dark or match your iPhone",
+                                            accessory: .value(Appearance.current.title))
     private let logoutButton = UIButton(configuration: .plain())
 
     // MARK: - Lifecycle
@@ -94,9 +96,24 @@ final class ProfileViewController: ScrollStackViewController {
         logoutButton.heightAnchor.constraint(equalToConstant: AppLayout.buttonHeight).isActive = true
     }
 
+    private func chooseAppearance() {
+        let sheet = UIAlertController(title: "Appearance", message: nil, preferredStyle: .actionSheet)
+        for option in Appearance.allCases {
+            let title = option == Appearance.current ? "\(option.title) ✓" : option.title
+            sheet.addAction(UIAlertAction(title: title, style: .default) { [weak self] _ in
+                Appearance.select(option)
+                self?.appearanceRow.setAccessory(.value(option.title))
+            })
+        }
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        sheet.popoverPresentationController?.sourceView = appearanceRow
+        present(sheet, animated: true)
+    }
+    
     // MARK: - Setup Actions
 
     private func setupActions() {
+        appearanceRow.on { [weak self] in self?.chooseAppearance() }
         logoutButton.on { [weak self] in self?.confirmLogout() }
         faceIDRow.toggle.on(.valueChanged) { [weak self] in
             guard let self else { return }
@@ -105,7 +122,7 @@ final class ProfileViewController: ScrollStackViewController {
         passcodeRow.on { [weak self] in self?.openChangePasscode() }
         helpButton.accessibilityLabel = "Help"
         editButton.accessibilityLabel = "Edit profile"
-        let comingSoon: [UIControl] = [helpButton, editButton, personalRow, securityRow, notificationsRow, appearanceRow]
+        let comingSoon: [UIControl] = [helpButton, editButton, personalRow, securityRow, notificationsRow]
         comingSoon.forEach { $0.on { [weak self] in self?.showAlert("Coming soon", Constants.comingSoon) } }
     }
     
