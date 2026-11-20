@@ -1,5 +1,5 @@
 //
-//  CardLimitViewModel.swift
+//  CardLimitsViewModel.swift
 //  ValeBanking
 //
 //  Created by Sokunsana Ly on 10/11/2026.

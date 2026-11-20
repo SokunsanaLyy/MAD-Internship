@@ -7,7 +7,7 @@
 
 import UIKit
 
-// MARK: - VerificationViewController (Figma: Verification)
+// MARK: - VerificationViewController
 
 final class VerificationViewController: ScrollStackViewController {
 
@@ -93,7 +93,6 @@ final class VerificationViewController: ScrollStackViewController {
         return bar
     }
 
-    /// Two-step progress: step 1 done (ink), step 2 current (lime).
     private func makeProgressBar() -> UIView {
         let done = UIView()
         done.backgroundColor = .valeInk
