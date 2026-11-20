@@ -9,7 +9,7 @@ import UIKit
 
 // MARK: - PasscodeViewController
 
-final class AppLockPasscodeViewController: ScrollStackViewController {
+final class PasscodeViewController: ScrollStackViewController {
 
     // MARK: - Dependencies
 

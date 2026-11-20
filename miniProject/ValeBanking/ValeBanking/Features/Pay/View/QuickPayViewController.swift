@@ -63,6 +63,7 @@ final class AddQuickPayViewController: ScrollStackViewController {
 
         methodControl.selectedSegmentIndex = 0
         methodControl.selectedSegmentTintColor = .valeLime
+        methodControl.setTitleTextAttributes([.foregroundColor: UIColor.valeOnLime], for: .selected)
 
         identifierField.textField.autocorrectionType = .no
         identifierField.textField.autocapitalizationType = .none
