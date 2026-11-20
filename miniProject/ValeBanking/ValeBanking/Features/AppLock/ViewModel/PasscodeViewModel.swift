@@ -119,7 +119,6 @@ final class PasscodeViewModel {
         }
     }
 
-    /// Rejects passcodes that are easy to guess, or the same as the current one.
     private func weaknessMessage(for code: String) -> String? {
         let digits = code.compactMap(\.wholeNumberValue)
         if Set(digits).count == 1 {

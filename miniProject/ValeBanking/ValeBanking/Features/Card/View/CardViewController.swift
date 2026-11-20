@@ -22,7 +22,7 @@ final class CardViewController: ScrollStackViewController {
     // MARK: - UI
 
     private let helpButton = makeCircleButton(symbol: "questionmark")
-    private let cardView = DebitCardView()
+    private let cardView = CardDebitCardView()
     private let linkedLabel = UILabel(font: .vale(13), color: .valeMuted)
     private let showDetailsButton = ValeButton("Show card details", symbol: "touchid", style: .primary)
     private let lockTile = ValeButton("Lock card", symbol: "lock", style: .tile)

@@ -81,7 +81,7 @@ final class SignUpViewController: ScrollStackViewController {
         phoneField.textField.textContentType = .telephoneNumber
 
         passwordField.addPasswordToggle()
-        passwordField.textField.textContentType = .newPassword      // iOS can suggest a strong password
+        passwordField.textField.textContentType = .newPassword     
         confirmField.addPasswordToggle()
         confirmField.textField.textContentType = .newPassword
 

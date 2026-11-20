@@ -32,7 +32,6 @@ final class SignUpViewModel {
 
     // MARK: Validation
 
-    /// Returns the first problem in the form, or nil when everything is OK.
     func validate(fullName: String, email: String, phone: String,
                   password: String, confirmPassword: String) -> (String, Field)? {
         if fullName.trimmingCharacters(in: .whitespaces).split(separator: " ").count < 2 {

@@ -60,7 +60,7 @@ final class VerificationViewModel {
             do {
                 try await SessionStore.shared.verify(code: code)
                 self.stopCountdown()
-                // SessionStore switches to the tab bar
+                
             } catch {
                 self.state = .failed(error.localizedDescription)
             }

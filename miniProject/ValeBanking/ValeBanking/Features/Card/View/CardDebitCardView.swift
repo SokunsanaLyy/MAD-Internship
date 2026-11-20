@@ -1,5 +1,5 @@
 //
-//  DebitCardView.swift
+//  CardDebitCardView.swift
 //  ValeBanking
 //
 //  Created by Sokunsana Ly on 31/10/2026.
@@ -7,9 +7,9 @@
 
 import UIKit
 
-// MARK: - DebitCardView (Card detail)
+// MARK: - CardDebitCardView (Card detail)
 
-final class DebitCardView: UIView {
+final class CardDebitCardView: UIView {
 
     private let logoLabel = UILabel(text: "vale.", font: .vale(28, .semibold), color: .white)
     private let statusLabel = UILabel(font: .vale(12, .semibold), color: .valeLime)
@@ -39,7 +39,7 @@ final class DebitCardView: UIView {
     }
 
     private func setupViews() {
-        applyCardStyle(color: .valeInkFill, radius: 24, border: true, borderColor: .valeCardEdge)
+        applyCardStyle(color: .valeInk, radius: 24, border: false)
         clipsToBounds = true
         isAccessibilityElement = true
 

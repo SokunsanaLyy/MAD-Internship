@@ -1,5 +1,5 @@
 //
-//  LimitSliderView.swift
+//  CardLimitSliderView.swift
 //  ValeBanking
 //
 //  Created by Sokunsana Ly on 10/11/2026.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LimitSliderView: UIView {
+final class CardLimitSliderView: UIView {
 
     var onChange: ((Double) -> Void)?
 
